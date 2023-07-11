@@ -1,5 +1,6 @@
 "use client";
 
+import { Context } from "./components/Context";
 import Header from "./components/Header";
 import Messages from "./components/Messages";
 import { useChat } from "ai/react";
@@ -11,7 +12,7 @@ export default function Chat() {
     <div className="flex flex-col justify-between h-screen bg-gray-800 p-2 mx-auto max-w-full">
       <Header className=" mt-5 mb-5" />
       <div className="flex w-full flex-grow overflow-hidden">
-        <div className="flex flex-col w-full mr-4 mx-5">
+        <div className="flex flex-col w-3/5 mr-4 mx-5">
           <Messages messages={messages} />
           <>
             <form
@@ -30,6 +31,9 @@ export default function Chat() {
               </span>
             </form>
           </>
+        </div>
+        <div className="bg-gray-700 w-2/5 overflow-y-auto">
+          <Context className="" />
         </div>
       </div>
     </div>
