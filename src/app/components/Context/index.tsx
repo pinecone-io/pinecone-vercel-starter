@@ -1,19 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { urls } from "./urls";
 import UrlButton from "./UrlButton";
 import { Card, ICard } from "./Card";
 import { crawlDocument } from "./utils";
 interface ContextProps {
   className: string;
+  selected: string[] | null;
 }
 
-export const Context: React.FC<ContextProps> = ({ className }) => {
+export const Context: React.FC<ContextProps> = ({ className, selected }) => {
   const [entries, setEntries] = useState(urls);
   const [cards, setCards] = useState<ICard[]>([]);
 
   const [splittingMethod, setSplittingMethod] = useState("markdown");
   const [chunkSize, setChunkSize] = useState(256);
   const [overlap, setOverlap] = useState(1);
+
+  // Scroll to selected card
+  useEffect(() => {
+    const element = selected && document.getElementById(selected[0]);
+    element?.scrollIntoView({ behavior: "smooth" });
+  }, [selected]);
 
   const DropdownLabel: React.FC<
     React.PropsWithChildren<{ htmlFor: string }>
@@ -87,10 +94,10 @@ export const Context: React.FC<ContextProps> = ({ className }) => {
       </div>
     );
   };
-
+  console.log(entries);
   const buttons = entries.map((entry, key) => (
     <UrlButton
-      key={key}
+      key={`${key}-${entry.loading}`}
       entry={entry}
       onClick={() =>
         crawlDocument(
@@ -105,7 +112,9 @@ export const Context: React.FC<ContextProps> = ({ className }) => {
     />
   ));
   return (
-    <div className="flex flex-col space-y-4 overflow-y-scroll items-center">
+    <div
+      className={`flex flex-col space-y-4 overflow-y-scroll items-center ${className}`}
+    >
       <div className="flex flex-col items-center sticky top-0">
         <div className="flex p-2">{buttons}</div>
         <div className="flex p-2">
@@ -116,7 +125,7 @@ export const Context: React.FC<ContextProps> = ({ className }) => {
       <div className="flex flex-wrap w-full">
         {cards &&
           cards.map((card, key) => (
-            <Card key={key} card={card} selected={[]} />
+            <Card key={key} card={card} selected={selected} />
           ))}
       </div>
     </div>

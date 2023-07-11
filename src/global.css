@@ -1,3 +1,66 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-bottom {
+  animation: slideInFromBottom 0.3s ease-out;
+}
+
+.input-glow {
+  box-shadow: 0 0 3px #4a5568, 0 0 5px #4a5568;
+}
+
+.input-glow:hover {
+  box-shadow: 0 0 5px #87f4f6, 0 0 10px #8b9ebe;
+}
+
+.message-glow {
+  box-shadow: 0 0 3px #4a5568, 0 0 5px #4a5568;
+}
+
+.message-glow:hover {
+  box-shadow: 0 0 3px #5eabac, 0 0 4px #8b9ebe;
+}
+
+@keyframes glimmer {
+  0% {
+    background-position: -200px;
+  }
+  100% {
+    background-position: calc(200px + 100%);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer {
+  animation: glimmer 2s infinite linear;
+  background: rgb(82, 82, 91);
+  background: linear-gradient(
+    to right,
+    darkgray 10%,
+    rgb(130, 129, 129) 50%,
+    rgba(124, 123, 123, 0.816) 90%
+  );
+  background-size: 200px 100%;
+  background-repeat: no-repeat;
+  /* color: transparent; */
+}

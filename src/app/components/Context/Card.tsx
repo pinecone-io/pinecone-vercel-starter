@@ -10,7 +10,7 @@ export interface ICard {
 
 interface ICardProps {
   card: ICard;
-  selected: string[];
+  selected: string[] | null;
 }
 
 export const Card: FC<ICardProps> = ({ card, selected }) => (
