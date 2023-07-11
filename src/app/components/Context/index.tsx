@@ -2,20 +2,14 @@ import React, { useState } from "react";
 import { urls } from "./urls";
 import UrlButton from "./UrlButton";
 import { Card, ICard } from "./Card";
+import { crawlDocument } from "./utils";
 interface ContextProps {
   className: string;
 }
 
 export const Context: React.FC<ContextProps> = ({ className }) => {
   const [entries, setEntries] = useState(urls);
-  const [cards, setCards] = useState<ICard[]>([
-    {
-      pageContent: "Hello World",
-      metadata: {
-        hash: "123",
-      },
-    },
-  ]);
+  const [cards, setCards] = useState<ICard[]>([]);
 
   const [splittingMethod, setSplittingMethod] = useState("markdown");
   const [chunkSize, setChunkSize] = useState(256);
@@ -95,7 +89,20 @@ export const Context: React.FC<ContextProps> = ({ className }) => {
   };
 
   const buttons = entries.map((entry, key) => (
-    <UrlButton key={key} entry={entry} />
+    <UrlButton
+      key={key}
+      entry={entry}
+      onClick={() =>
+        crawlDocument(
+          entry.url,
+          setEntries,
+          setCards,
+          splittingMethod,
+          chunkSize,
+          overlap
+        )
+      }
+    />
   ));
   return (
     <div className="flex flex-col space-y-4 overflow-y-scroll items-center">

@@ -10,9 +10,10 @@ export interface IUrlEntry {
 
 interface IURLButtonProps {
   entry: IUrlEntry;
+  onClick: () => Promise<void>;
 }
 
-const UrlButton: FC<IURLButtonProps> = ({ entry }) => (
+const UrlButton: FC<IURLButtonProps> = ({ entry, onClick }) => (
   <div key={`${entry.url}-${entry.seeded}`} className="flex-grow px-2">
     <Button
       className={`relative overflow-hidden w-full my-2 mx-2 ${
@@ -22,6 +23,7 @@ const UrlButton: FC<IURLButtonProps> = ({ entry }) => (
         backgroundColor: entry.seeded ? "green" : "bg-gray-800",
         color: entry.seeded ? "white" : "text-gray-200",
       }}
+      onClick={onClick}
     >
       {entry.loading && (
         <div
