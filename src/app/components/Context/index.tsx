@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { urls } from "./urls";
 import UrlButton from "./UrlButton";
 import { Card, ICard } from "./Card";
-import { crawlDocument } from "./utils";
+import { clearIndex, crawlDocument } from "./utils";
+import { Button } from "./Button";
 interface ContextProps {
   className: string;
   selected: string[] | null;
@@ -94,7 +95,6 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
       </div>
     );
   };
-  console.log(entries);
   const buttons = entries.map((entry, key) => (
     <UrlButton
       key={`${key}-${entry.loading}`}
@@ -116,10 +116,22 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
       className={`flex flex-col space-y-4 overflow-y-scroll items-center ${className}`}
     >
       <div className="flex flex-col items-center sticky top-0">
-        <div className="flex p-2">{buttons}</div>
         <div className="flex p-2">
-          <div className="flex-grow px-2"></div>
+          {buttons}
+          <div className="flex-grow px-2">
+            <Button
+              className="w-full my-2"
+              style={{
+                backgroundColor: "#4f6574",
+                color: "white",
+              }}
+              onClick={() => clearIndex(setEntries, setCards)}
+            >
+              Clear Index
+            </Button>
+          </div>
         </div>
+        <div className="flex p-2"></div>
         <Dropdown />
       </div>
       <div className="flex flex-wrap w-full">
