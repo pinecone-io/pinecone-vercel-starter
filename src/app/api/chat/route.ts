@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai-edge'
 import { Message, OpenAIStream, StreamingTextResponse } from 'ai'
+import { getContext } from '@/app/utils/context'
 
 // Create an OpenAI API client (that's edge friendly!)
 const config = new Configuration({
@@ -14,6 +15,12 @@ export async function POST(req: Request) {
   try {
 
     const { messages } = await req.json()
+
+    // Get the last message
+    const lastMessage = messages[messages.length - 1]
+
+    // Get the context from the last message
+    const context = await getContext(lastMessage.content, '')
 
 
     const prompt = [
