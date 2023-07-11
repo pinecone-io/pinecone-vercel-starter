@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { urls } from "./urls";
 import UrlButton from "./UrlButton";
+import { Card, ICard } from "./Card";
 interface ContextProps {
   className: string;
 }
 
 export const Context: React.FC<ContextProps> = ({ className }) => {
-  const [entries, setEntries] = React.useState(urls);
+  const [entries, setEntries] = useState(urls);
+  const [cards, setCards] = useState<ICard[]>([
+    {
+      pageContent: "Hello World",
+      metadata: {
+        hash: "123",
+      },
+    },
+  ]);
 
   const buttons = entries.map((entry, key) => (
     <UrlButton key={key} entry={entry} />
@@ -18,6 +27,12 @@ export const Context: React.FC<ContextProps> = ({ className }) => {
         <div className="flex p-2">
           <div className="flex-grow px-2"></div>
         </div>
+      </div>
+      <div className="flex flex-wrap w-full">
+        {cards &&
+          cards.map((card, key) => (
+            <Card key={key} card={card} selected={[]} />
+          ))}
       </div>
     </div>
   );
