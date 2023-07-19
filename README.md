@@ -451,31 +451,24 @@ export const getContext = async (
   // Filter out the matches that have a score lower than the minimum score
   const qualifyingDocs = matches.filter((m) => m.score && m.score > minScore);
 
-  // If the `getOnlyText` flag is true, we return only the text of the matches
-  if (getOnlyText) {
-    // Use a map to deduplicate matches by URL
-    const docs =
-      matches &&
-      Array.from(
-        qualifyingDocs.reduce((map, match) => {
-          // Extract the chunk and URL from the match metadata
-          const metadata = match.metadata as Metadata;
-          const { chunk, url } = metadata;
-
-          // If the URL isn't already in the map, add the chunk of text associated with it
-          if (!map.has(url)) {
-            map.set(url, chunk);
-          }
-          return map;
-        }, new Map())
-      ).map(([_, chunk]) => chunk);
-
-    // Join all the chunks of text together, truncate to the maximum number of tokens, and return the result
-    return docs.join("\n").substring(0, maxTokens);
-  } else {
-    // If `getOnlyText` is false, return the full qualifying documents
+  // If the `getOnlyText` flag is false, we'll return the matches
+  if (!getOnlyText) {
     return qualifyingDocs;
   }
+
+  let docs = [];
+  if (matches) {
+    for (let match of qualifyingDocs) {
+      // Extract the chunk from the match metadata
+      const metadata = match.metadata as Metadata;
+      const chunk = metadata.chunk;
+
+      docs.push(chunk);
+    }
+  }
+
+  // Join all the chunks of text together, truncate to the maximum number of tokens, and return the result
+  return docs.join("\n").substring(0, maxTokens);
 };
 ```
 
