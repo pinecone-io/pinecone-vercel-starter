@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@pinecone-database/doc-splitter": "file:../doc-splitter",
+    "@pinecone-database/doc-splitter": "@pinecone-database/doc-splitter",
     "@pinecone-database/pinecone": "^0.1.6",
     "@types/node": "20.4.0",
     "@types/react": "18.2.14",
