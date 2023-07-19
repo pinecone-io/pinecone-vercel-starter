@@ -456,17 +456,9 @@ export const getContext = async (
     return qualifyingDocs;
   }
 
-  let docs = [];
-  if (matches) {
-    for (let match of qualifyingDocs) {
-      // Extract the chunk from the match metadata
-      const metadata = match.metadata as Metadata;
-      const chunk = metadata.chunk;
-
-      docs.push(chunk);
-    }
-  }
-
+  let docs = matches
+    ? qualifyingDocs.map((match) => (match.metadata as Metadata).chunk)
+    : [];
   // Join all the chunks of text together, truncate to the maximum number of tokens, and return the result
   return docs.join("\n").substring(0, maxTokens);
 };
