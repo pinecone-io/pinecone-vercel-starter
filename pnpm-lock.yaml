@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@pinecone-database/doc-splitter': '@pinecone-database/doc-splitter'
+  '@pinecone-database/doc-splitter': ^0.0.1
   '@pinecone-database/pinecone': ^0.1.6
   '@types/md5': ^2.3.2
   '@types/node': 20.4.0
@@ -26,7 +26,7 @@ specifiers:
   vue: ^3.3.4
 
 dependencies:
-  '@pinecone-database/doc-splitter': link:@pinecone-database/doc-splitter
+  '@pinecone-database/doc-splitter': 0.0.1
   '@pinecone-database/pinecone': 0.1.6
   '@types/node': 20.4.0
   '@types/react': 18.2.14
@@ -299,6 +299,11 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
+    dev: false
+
+  /@pinecone-database/doc-splitter/0.0.1:
+    resolution: {integrity: sha512-UCJgNZKnXPcrTblI9ui6H+HbQbyYf8bsGQAGR3f4IYW2Lw1zQ0izFrjGsCgqiP+GE837JXv43+qgkSqwWlnZtA==}
+    engines: {node: '>=14.0.0'}
     dev: false
 
   /@pinecone-database/pinecone/0.1.6:
