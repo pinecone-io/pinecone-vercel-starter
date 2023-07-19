@@ -4,7 +4,7 @@ RAG is a powerful tool that combines the benefits of retrieval-based models and 
 
 Incorporating Vercel's AI SDK into our application will allow us easily set up the chatbot workflow and utilize streaming more efficiently, particularly in edge environments, enhancing the responsiveness and performance of our chatbot.
 
-By the end of this tutorial, you'll have a context-aware chatbot that provides accurate responses without hallucination, ensuring a more effective and engaging user experience. Let's get started on building this powerful tool.
+By the end of this tutorial, you'll have a context-aware chatbot that provides accurate responses without hallucination, ensuring a more effective and engaging user experience. Let's get started on building this powerful tool ([Full code listing](https://github.com/pinecone-io/pinecone-vercel-example/blob/main/package.json)).
 
 ## Step 1: Setting Up Your Next.js Application
 
@@ -24,7 +24,7 @@ Next, we'll add the `ai` package:
 npm install ai
 ```
 
-You can use the [full list]() of dependencies if you'd like to build along with the tutorial.
+You can use the [full list](https://github.com/pinecone-io/pinecone-vercel-example/blob/main/package.json) of dependencies if you'd like to build along with the tutorial.
 
 ## Step 2: Create the Chatbot
 
@@ -521,7 +521,7 @@ In this prompt, we added a `START CONTEXT BLOCK` and `END OF CONTEXT BLOCK` to i
 
 ### Add the context panel
 
-Next, we need to add the context panel to the chat UI. We'll add a new component called `Context` (see [full code]()).
+Next, we need to add the context panel to the chat UI. We'll add a new component called `Context` ([full code](https://github.com/pinecone-io/pinecone-vercel-example/tree/main/src/app/components/Context)).
 
 ### Add the context endpoint
 
