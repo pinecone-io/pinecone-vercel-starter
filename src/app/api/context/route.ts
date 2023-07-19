@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getContext } from "@/app/utils/context";
+import { getContext } from "@/utils/context";
 import { ScoredVector } from "@pinecone-database/pinecone";
 
 export async function POST(req: Request) {

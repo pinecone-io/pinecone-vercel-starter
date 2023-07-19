@@ -1,10 +1,10 @@
-import { getEmbeddings } from "@/app/utils/embeddings";
+import { getEmbeddings } from "@/utils/embeddings";
 import { Document, MarkdownTextSplitter, RecursiveCharacterTextSplitter } from "@pinecone-database/doc-splitter";
 import { utils as PineconeUtils, Vector } from "@pinecone-database/pinecone";
 import md5 from "md5";
-import { getPineconeClient } from "@/app/utils/pinecone";
+import { getPineconeClient } from "@/utils/pinecone";
 import { Crawler, Page } from "./crawler";
-import { truncateStringByBytes } from "@/app/utils/truncateString"
+import { truncateStringByBytes } from "@/utils/truncateString"
 
 const { chunkedUpsert, createIndexIfNotExists } = PineconeUtils
 
@@ -82,7 +82,7 @@ async function embedDocument(doc: Document): Promise<Vector> {
 }
 
 async function prepareDocument(page: Page, splitter: DocumentSplitter): Promise<Document[]> {
-  // Fetch the content of the page
+  // Get the content of the page
   const pageContent = page.content;
 
   // Split the documents using the provided splitter

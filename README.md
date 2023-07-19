@@ -1,34 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Step 1: Setting Up Your Next.js Application
 
-## Getting Started
+<!-- Below are clear Instructions for creating a Next.js app -->
 
-First, run the development server:
+To create a new Next.js app, run the following command:
+
+### npx
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+npx create-next-app chatbot
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Next, we'll add the `ai` package:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install ai
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Step 2: Create the Chatbot
 
-## Learn More
+In `page.tsx`, we'll add the `useChat` hook:
 
-To learn more about Next.js, take a look at the following resources:
+```tsx
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Chatbot frontend component
 
-## Deploy on Vercel
+### Chatbot API endpoint
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Step 3. Adding Context
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Initialize the Pinecone client
+
+### Get matches from embeddings
+
+### Wrap things up in `getContext`
+
+### Update the prompt
+
+## Seeding the Knowledge Base
+
+### Create the crawler
+
+### Create the seed script
+
+### Add the `crawl` endpoint`
+
+### Add the context panel
+
+### Add the context endpoint
