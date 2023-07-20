@@ -1,3 +1,5 @@
+// UrlButton.tsx
+
 import { Button } from "./Button";
 import React, { FC } from "react";
 
@@ -14,9 +16,9 @@ interface IURLButtonProps {
 }
 
 const UrlButton: FC<IURLButtonProps> = ({ entry, onClick }) => (
-  <div key={`${entry.url}-${entry.seeded}`} className="flex-grow px-2">
+  <div key={`${entry.url}-${entry.seeded}`} className="pr-2 lg:flex-grow">
     <Button
-      className={`relative overflow-hidden w-full my-2 mx-2 ${
+      className={`relative overflow-hidden w-full my-1 lg:my-2 mx-2 ${
         entry.loading ? "shimmer" : ""
       }`}
       style={{

@@ -33,27 +33,31 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
   );
 
   const buttons = entries.map((entry, key) => (
-    <UrlButton
+    <div
+      className="my-1 lg:my-0 w-full pr-2 lg:flex-grow"
       key={`${key}-${entry.loading}`}
-      entry={entry}
-      onClick={() =>
-        crawlDocument(
-          entry.url,
-          setEntries,
-          setCards,
-          splittingMethod,
-          chunkSize,
-          overlap
-        )
-      }
-    />
+    >
+      <UrlButton
+        entry={entry}
+        onClick={() =>
+          crawlDocument(
+            entry.url,
+            setEntries,
+            setCards,
+            splittingMethod,
+            chunkSize,
+            overlap
+          )
+        }
+      />
+    </div>
   ));
   return (
     <div
-      className={`flex flex-col space-y-4 overflow-y-scroll items-center ${className}`}
+      className={`flex flex-col space-y-4 overflow-y-scroll border-2 border-gray-500 w-full ${className}`}
     >
-      <div className="flex flex-col items-center sticky top-0">
-        <div className="flex p-2">
+      <div className="flex flex-col items-start sticky top-0 w-full">
+        <div className="flex flex-col lg:flex-row w-full p-2">
           {buttons}
           <div className="flex-grow px-2">
             <Button
@@ -73,15 +77,17 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
           <DropdownLabel htmlFor="splittingMethod">
             Splitting Method:
           </DropdownLabel>
-          <select
-            id="splittingMethod"
-            value={splittingMethod}
-            className="p-2 bg-gray-700 rounded text-white"
-            onChange={(e) => setSplittingMethod(e.target.value)}
-          >
-            <option value="recursive">Recursive Text Splitting</option>
-            <option value="markdown">Markdown Splitting</option>
-          </select>
+          <div className="relative w-full">
+            <select
+              id="splittingMethod"
+              value={splittingMethod}
+              className="p-2 bg-gray-700 rounded text-white w-full appearance-none"
+              onChange={(e) => setSplittingMethod(e.target.value)}
+            >
+              <option value="recursive">Recursive Text Splitting</option>
+              <option value="markdown">Markdown Splitting</option>
+            </select>
+          </div>
           {splittingMethod === "recursive" && (
             <div className="my-4 flex flex-col">
               <div className="flex flex-col w-full">

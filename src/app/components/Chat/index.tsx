@@ -1,3 +1,5 @@
+// Chat.tsx
+
 import React, { FormEvent, ChangeEvent } from "react";
 import Messages from "./Messages";
 import { Message } from "ai/react";
@@ -16,7 +18,7 @@ const Chat: React.FC<Chat> = ({
   messages,
 }) => {
   return (
-    <div id="chat" className="flex flex-col w-3/5 mr-4 mx-5">
+    <div id="chat" className="flex flex-col w-full lg:w-3/5 mr-4 mx-5 lg:mx-0">
       <Messages messages={messages} />
       <>
         <form
