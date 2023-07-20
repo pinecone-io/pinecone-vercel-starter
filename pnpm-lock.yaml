@@ -17,6 +17,7 @@ specifiers:
   openai-edge: ^1.2.0
   react: 18.2.0
   react-dom: 18.2.0
+  react-icons: ^4.10.1
   react-markdown: ^8.0.7
   sswr: ^2.0.0
   svelte: ^3.29.0
@@ -41,6 +42,7 @@ dependencies:
   openai-edge: 1.2.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-icons: 4.10.1_react@18.2.0
   react-markdown: 8.0.7_i73ekzlbntu7jol6ph2fvy4mga
   sswr: 2.0.0_svelte@3.59.2
   svelte: 3.59.2
@@ -2763,6 +2765,14 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+    dev: false
+
+  /react-icons/4.10.1_react@18.2.0:
+    resolution: {integrity: sha512-/ngzDP/77tlCfqthiiGNZeYFACw85fUjZtLbedmJ5DTlNDIwETxhwBzdOJ21zj4iJdvc0J3y7yOsX3PpxAJzrw==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-is/16.13.1:
