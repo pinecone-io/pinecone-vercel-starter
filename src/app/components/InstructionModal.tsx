@@ -1,4 +1,5 @@
 import React from "react";
+import { AiFillGithub } from "react-icons/ai";
 
 interface InstructionModalProps {
   isOpen: boolean;
@@ -22,10 +23,14 @@ const InstructionModal: React.FC<InstructionModalProps> = ({
         </button>
         <h2 className="text-2xl font-bold mb-4">Instructions</h2>
         <p>
-          This chatbot demonstrates a simple RAG pattern using Pinecone and
-          Vercel&apos;s AI SDK. In the context panel on the right, you can see
-          some articles you can index in Pinecone (on mobile, open the context
-          panel by clicking the button at the top left of the message panel).
+          This chatbot demonstrates a simple RAG pattern using{" "}
+          <a href="https://pinecone.io" target="_blank" className="text-gray">
+            Pinecone
+          </a>{" "}
+          and Vercel&apos;s AI SDK. In the context panel on the right, you can
+          see some articles you can index in Pinecone (on mobile, open the
+          context panel by clicking the button at the top left of the message
+          panel). Click on the blue link icons to open the URLs in a new window.
         </p>
         <br />
         <p>

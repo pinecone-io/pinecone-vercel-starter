@@ -64,3 +64,17 @@
   background-repeat: no-repeat;
   /* color: transparent; */
 }
+
+@keyframes pulse {
+  0%,
+  100% {
+    color: white;
+  }
+  50% {
+    color: #f59e0b; /* Tailwind's yellow-500 */
+  }
+}
+
+.animate-pulse-once {
+  animation: pulse 5s cubic-bezier(0, 0, 0.2, 1) 1;
+}

@@ -34,7 +34,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
 
   const buttons = entries.map((entry, key) => (
     <div
-      className="my-1 lg:my-0 w-full pr-2 lg:flex-grow"
+      className="my-1 lg:my-0 w-full pr-2 flex-grow"
       key={`${key}-${entry.loading}`}
     >
       <UrlButton
@@ -57,20 +57,18 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
       className={`flex flex-col space-y-4 overflow-y-scroll border-2 border-gray-500 w-full ${className}`}
     >
       <div className="flex flex-col items-start sticky top-0 w-full">
-        <div className="flex flex-col lg:flex-row w-full p-2">
-          {buttons}
-          <div className="flex-grow px-2">
-            <Button
-              className="w-full my-2"
-              style={{
-                backgroundColor: "#4f6574",
-                color: "white",
-              }}
-              onClick={() => clearIndex(setEntries, setCards)}
-            >
-              Clear Index
-            </Button>
-          </div>
+        <div className="flex flex-col lg:flex-row w-full p-2">{buttons}</div>
+        <div className="flex-grow w-full px-4">
+          <Button
+            className="w-full my-2"
+            style={{
+              backgroundColor: "#4f6574",
+              color: "white",
+            }}
+            onClick={() => clearIndex(setEntries, setCards)}
+          >
+            Clear Index
+          </Button>
         </div>
         <div className="flex p-2"></div>
         <div className="text-left w-full ml-1 mr-1 flex flex-col bg-gray-600 p-3  subpixel-antialiased">
