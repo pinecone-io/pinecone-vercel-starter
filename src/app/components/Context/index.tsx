@@ -57,7 +57,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
       className={`flex flex-col space-y-4 overflow-y-scroll border-2 border-gray-500 w-full ${className}`}
     >
       <div className="flex flex-col items-start sticky top-0 w-full">
-        <div className="flex flex-col lg:flex-row w-full p-2">{buttons}</div>
+        <div className="flex flex-col lg:flex-row w-full lg:flex-wrap p-2">{buttons}</div>
         <div className="flex-grow w-full px-4">
           <Button
             className="w-full my-2"
