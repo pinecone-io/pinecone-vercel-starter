@@ -33,10 +33,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
   );
 
   const buttons = entries.map((entry, key) => (
-    <div
-      className="my-1 lg:my-0 w-full pr-2 flex-grow"
-      key={`${key}-${entry.loading}`}
-    >
+    <div className="" key={`${key}-${entry.loading}`}>
       <UrlButton
         entry={entry}
         onClick={() =>
@@ -52,15 +49,18 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
       />
     </div>
   ));
+
   return (
     <div
-      className={`flex flex-col space-y-4 overflow-y-scroll border-2 border-gray-500 w-full ${className}`}
+      className={`flex flex-col border-2 overflow-y-auto rounded-lg border-gray-500 w-full ${className}`}
     >
       <div className="flex flex-col items-start sticky top-0 w-full">
-        <div className="flex flex-col lg:flex-row w-full p-2">{buttons}</div>
+        <div className="flex flex-col items-start lg:flex-row w-full lg:flex-wrap p-2">
+          {buttons}
+        </div>
         <div className="flex-grow w-full px-4">
           <Button
-            className="w-full my-2"
+            className="w-full my-2 uppercase active:scale-[98%] transition-transform duration-100"
             style={{
               backgroundColor: "#4f6574",
               color: "white",
@@ -71,7 +71,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
           </Button>
         </div>
         <div className="flex p-2"></div>
-        <div className="text-left w-full ml-1 mr-1 flex flex-col bg-gray-600 p-3  subpixel-antialiased">
+        <div className="text-left w-full flex flex-col rounded-b-lg bg-gray-600 p-3 subpixel-antialiased">
           <DropdownLabel htmlFor="splittingMethod">
             Splitting Method:
           </DropdownLabel>
@@ -79,7 +79,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
             <select
               id="splittingMethod"
               value={splittingMethod}
-              className="p-2 bg-gray-700 rounded text-white w-full appearance-none"
+              className="p-2 bg-gray-700 rounded text-white w-full appearance-none hover:cursor-pointer"
               onChange={(e) => setSplittingMethod(e.target.value)}
             >
               <option value="recursive">Recursive Text Splitting</option>
