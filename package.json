@@ -27,7 +27,7 @@
     "react-icons": "^4.10.1",
     "react-markdown": "^8.0.7",
     "sswr": "^2.0.0",
-    "svelte": "^3.29.0",
+    "svelte": "^4.0.5",
     "tailwindcss": "3.3.2",
     "typescript": "5.1.6",
     "unified": "^10.1.2",
