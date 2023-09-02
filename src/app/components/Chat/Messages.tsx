@@ -2,18 +2,12 @@ import { Message } from 'ai';
 import { useEffect, useRef } from 'react';
 import winkNLP from 'wink-nlp';
 import model from 'wink-eng-lite-web-model';
-import axios from 'axios';
-
 const nlp = winkNLP(model);
-//const its = nlp.its;
 
 let speechSynthesis: SpeechSynthesis;
 if (typeof window !== 'undefined') {
   speechSynthesis = window.speechSynthesis;
 }
-
-const ELEVENLABS_TTS_API_KEY = process.env.ELEVENLABS_TTS_API_KEY;
-const ELEVENLABS_TTS_VOICE_ID_IRIS = process.env.ELEVENLABS_TTS_VOICE_ID_IRIS;
 
 const speak = (text: string) => {
   const utterance = new SpeechSynthesisUtterance(text);
@@ -33,7 +27,6 @@ export default function Messages({
   useEffect(() => {
     if (!isLoading && sentences.current.length > 0) {
       speak(sentences.current[leIndex.current]); // add to queue for audio conversion
-      //speakMessageViaExternalTTS(sentences.current[leIndex.current]);
       leIndex.current = 0;
       sentences.current = [];
     }
@@ -42,7 +35,6 @@ export default function Messages({
   useEffect(() => {
     if (sentences.current.length > 1) {
       speak(sentences.current[leIndex.current]); // add to queue for audio conversion
-      //speakMessageViaExternalTTS(sentences.current[leIndex.current]);
       leIndex.current++;
     }
   }, [sentences.current.length]);
@@ -56,29 +48,6 @@ export default function Messages({
       }
     }
   }, [isLoading, messages]);
-
-  
-  // const speakMessageViaExternalTTS = async (message: string) => {
-  //   const options = {
-  //     method: 'POST',
-  //     url: `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_TTS_VOICE_ID_IRIS}`,
-  //     headers: {
-  //       accept: 'audio/mpeg',
-  //       'content-type': 'application/json',
-  //       'xi-api-key': `${ELEVENLABS_TTS_API_KEY}`,
-  //     },
-  //     data: {
-  //       text: message + '...',
-  //     },
-  //     responseType: 'arraybuffer' as const,
-  //   };
-  //   const data = (await axios.request(options)).data;
-
-  //   const blob = new Blob([data], { type: 'audio/mpeg' });
-  //   const url = URL.createObjectURL(blob);
-  //   let audio = new Audio(url);
-  //   audio.play();
-  // };
 
   return (
     <div className="border-2 border-gray-600 p-6 rounded-lg overflow-y-scroll flex-grow flex flex-col justify-end bg-gray-700">
