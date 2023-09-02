@@ -9,6 +9,7 @@ interface Chat {
   handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleMessageSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
   messages: Message[];
+  isLoading: boolean;
 }
 
 const Chat: React.FC<Chat> = ({
@@ -16,10 +17,11 @@ const Chat: React.FC<Chat> = ({
   handleInputChange,
   handleMessageSubmit,
   messages,
+  isLoading,
 }) => {
   return (
     <div id="chat" className="flex flex-col w-full lg:w-3/5 mr-4 mx-5 lg:mx-0">
-      <Messages messages={messages} />
+      <Messages messages={messages} isLoading={isLoading} />
       <>
         <form
           onSubmit={handleMessageSubmit}

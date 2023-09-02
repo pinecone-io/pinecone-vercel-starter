@@ -15,6 +15,7 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "ai": "^2.1.16",
+    "axios": "^1.5.0",
     "cheerio": "^1.0.0-rc.12",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.9",
@@ -31,9 +32,12 @@
     "tailwindcss": "3.3.2",
     "typescript": "5.1.6",
     "unified": "^10.1.2",
-    "vue": "^3.3.4"
+    "vue": "^3.3.4",
+    "wink-eng-lite-web-model": "^1.5.2",
+    "wink-nlp": "^1.14.3"
   },
   "devDependencies": {
-    "@types/md5": "^2.3.2"
+    "@types/md5": "^2.3.2",
+    "encoding": "^0.1.13"
   }
 }
