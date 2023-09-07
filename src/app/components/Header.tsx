@@ -1,27 +1,18 @@
 import Image from "next/image";
-import PineconeLogo from "../../../public/pinecone.svg";
-import VercelLogo from "../../../public/vercel.svg";
-
+import testAILogo from "../../../public/test-ai.png";
 export default function Header({ className }: { className?: string }) {
-  return (
+    return (
     <header
       className={`flex items-center justify-center text-gray-200 text-2xl ${className}`}
     >
+      {/* https://www.fontspace.com/ */}
       <Image
-        src={PineconeLogo}
+        src={testAILogo}
         alt="pinecone-logo"
         width="230"
         height="50"
         className="ml-3"
-      />{" "}
-      <div className="text-4xl ml-3 mr-3">+</div>
-      <Image
-        src={VercelLogo}
-        alt="vercel-logo"
-        width="160"
-        height="50"
-        className="mr-3 mt-3"
-      />
+      />     
     </header>
   );
 }

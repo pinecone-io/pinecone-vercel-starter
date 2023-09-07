@@ -1,5 +1,3 @@
-// UrlButton.tsx
-
 import { Button } from "./Button";
 import React, { FC } from "react";
 import { IconContext } from "react-icons";

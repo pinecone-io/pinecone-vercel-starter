@@ -1,14 +1,13 @@
-// Chat.tsx
-
-import React, { FormEvent, ChangeEvent } from "react";
-import Messages from "./Messages";
-import { Message } from "ai/react";
+import React, { FormEvent, ChangeEvent } from 'react';
+import Messages from './Messages';
+import { Message } from 'ai/react';
 
 interface Chat {
   input: string;
   handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleMessageSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
   messages: Message[];
+  isLoading: boolean;
 }
 
 const Chat: React.FC<Chat> = ({
@@ -16,14 +15,15 @@ const Chat: React.FC<Chat> = ({
   handleInputChange,
   handleMessageSubmit,
   messages,
+  isLoading,
 }) => {
   return (
-    <div id="chat" className="flex flex-col w-full lg:w-3/5 mr-4 mx-5 lg:mx-0">
-      <Messages messages={messages} />
+    <div id="chat" className="flex flex-col w-full lg:w-3/5 px-2 flex-grow">
+      <Messages messages={messages} isLoading={isLoading} />
       <>
         <form
           onSubmit={handleMessageSubmit}
-          className="mt-5 mb-5 relative bg-gray-700 rounded-lg"
+          className="mt-5 mb-2 relative bg-gray-700 rounded-lg"
         >
           <input
             type="text"
@@ -33,7 +33,7 @@ const Chat: React.FC<Chat> = ({
           />
 
           <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
-            Press ⮐ to send
+            Send Message ⮐
           </span>
         </form>
       </>
