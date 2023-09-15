@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@pinecone-database/doc-splitter": "^0.0.1",
-    "@pinecone-database/pinecone": "^1.0.0",
+    "@pinecone-database/pinecone": "^1.0.1",
     "@types/node": "20.4.0",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",

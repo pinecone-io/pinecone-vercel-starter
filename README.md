@@ -393,7 +393,7 @@ const getMatchesFromEmbeddings = async (
   embeddings: number[],
   topK: number,
   namespace: string
-): Promise<ScoredVector[]> => {
+): Promise<ScoredPineconeRecord[]> => {
   // Obtain a client for Pinecone
   const pinecone = await getPineconeClient();
 
@@ -408,17 +408,15 @@ const getMatchesFromEmbeddings = async (
   // Get the Pinecone index
   const index = pinecone!.Index(process.env.PINECONE_INDEX!);
 
-  // Define the query request
-  const queryRequest = {
-    vector: embeddings,
-    topK,
-    includeMetadata: true,
-    namespace,
-  };
+  const pineconeNamespace = index.namespace(namespace ?? '')
 
   try {
     // Query the index with the defined request
-    const queryResult = await index.query({ queryRequest });
+    const queryResult = await pineconeNamespace.query({
+      vector: embeddings,
+      topK,
+      includeMetadata: true,
+    });
     return queryResult.matches || [];
   } catch (e) {
     // Log the error and throw it
@@ -524,7 +522,7 @@ export async function POST(req: Request) {
       10000,
       0.7,
       false
-    )) as ScoredVector[];
+    )) as ScoredPineconeRecord[];
     return NextResponse.json({ context });
   } catch (e) {
     console.log(e);
