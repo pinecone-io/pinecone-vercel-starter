@@ -65,7 +65,7 @@ const Page: React.FC = () => {
             "_blank"
           );
         }}
-        className="fixed right-12 top-4 md:right-12 md:top-6 text-xl text-white"
+        className="fixed right-12 top-4 md:right-12 md:top-6 text-xl text-white github-button"
       >
         <AiFillGithub />
       </button>
