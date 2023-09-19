@@ -21,3 +21,5 @@ test('GitHub link', async ({ page, browserName }) => {
   }
 });
 
+// TODO - add tests for other key buttons on the homepage
+
