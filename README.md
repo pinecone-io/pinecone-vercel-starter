@@ -552,3 +552,24 @@ useEffect(() => {
   prevMessagesLengthRef.current = messages.length;
 }, [messages, gotMessages]);
 ```
+
+## Running tests 
+
+The pinecone-vercel-starter uses [Playwright](https://playwright.dev) for end to end testing. 
+
+To run all the tests: 
+
+```
+npm run test:e2e
+```
+
+By default, when running locally, if errors are encountered, Playwright will open an HTML report showing which 
+tests failed and for which browser drivers.
+
+## Displaying test reports locally 
+
+To display the latest test report locally, run: 
+```
+npm run test:show
+```
+
