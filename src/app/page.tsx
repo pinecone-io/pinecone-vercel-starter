@@ -72,7 +72,7 @@ const Page: React.FC = () => {
 
       <button
         onClick={() => setModalOpen(true)}
-        className="fixed right-4 top-4 md:right-6 md:top-6 text-xl text-white animate-pulse-once"
+        className="fixed right-4 top-4 md:right-6 md:top-6 text-xl text-white animate-pulse-once info-button"
       >
         <AiOutlineInfoCircle />
       </button>
