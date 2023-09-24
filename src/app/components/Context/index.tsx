@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { urls } from "./urls";
 import UrlButton from "./UrlButton";
-import { Card, ICard } from "./Card";
+import { Card, ICard } from "@/components/Card";
+
 import { clearIndex, crawlDocument } from "./utils";
 
 import { Button } from "./Button";

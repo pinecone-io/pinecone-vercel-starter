@@ -3,16 +3,17 @@
 "use client";
 
 import React, { useEffect, useRef, useState, FormEvent } from "react";
-import { Context } from "@/components/Context";
 import Header from "@/components/Header";
 import Chat from "@/components/Chat";
 import { useChat } from "ai/react";
 import InstructionModal from "./components/InstructionModal";
 import { AiFillGithub, AiOutlineInfoCircle } from "react-icons/ai";
+import SidePanel from "./components/SidePanel";
 
 const Page: React.FC = () => {
   const [gotMessages, setGotMessages] = useState(false);
   const [context, setContext] = useState<string[] | null>(null);
+  const [relevantDocs, setRelevantDocs] = useState<[] | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
 
   const { messages, input, handleInputChange, handleSubmit } = useChat({
@@ -27,6 +28,7 @@ const Page: React.FC = () => {
     e.preventDefault();
     handleSubmit(e);
     setContext(null);
+    setRelevantDocs(null);
     setGotMessages(false);
   };
 
@@ -39,6 +41,7 @@ const Page: React.FC = () => {
         }),
       });
       const { context } = await response.json();
+      setRelevantDocs(context);
       setContext(context.map((c: any) => c.id));
     };
     if (gotMessages && messages.length >= prevMessagesLengthRef.current) {
@@ -89,7 +92,7 @@ const Page: React.FC = () => {
           messages={messages}
         />
         <div className="absolute transform translate-x-full transition-transform duration-500 ease-in-out right-0 w-2/3 h-full bg-gray-700 overflow-y-auto lg:static lg:translate-x-0 lg:w-2/5 lg:mx-2 rounded-lg">
-          <Context className="" selected={context} />
+          <SidePanel context={context} relevantDocs={relevantDocs}/>
         </div>
         <button
           type="button"
