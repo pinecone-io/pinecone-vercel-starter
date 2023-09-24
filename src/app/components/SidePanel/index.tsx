@@ -1,5 +1,3 @@
-// SidePanel.tsx
-
 import React, { useState } from "react";
 import { Context } from "@/components/Context";
 import { RelevantDocs, IRelevantDoc } from "@/components/RelevantDocs";
