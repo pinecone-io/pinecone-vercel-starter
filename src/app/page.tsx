@@ -3,7 +3,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState, FormEvent } from "react";
-// import { Context } from "@/components/Context";
 import Header from "@/components/Header";
 import Chat from "@/components/Chat";
 import { useChat } from "ai/react";
@@ -92,8 +91,6 @@ const Page: React.FC = () => {
           handleMessageSubmit={handleMessageSubmit}
           messages={messages}
         />
-        {/* <SidePanel context={context} /> */}
-
         <div className="absolute transform translate-x-full transition-transform duration-500 ease-in-out right-0 w-2/3 h-full bg-gray-700 overflow-y-auto lg:static lg:translate-x-0 lg:w-2/5 lg:mx-2 rounded-lg">
           <SidePanel context={context} relevantDocs={relevantDocs}/>
         </div>
