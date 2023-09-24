@@ -4,7 +4,7 @@ import { useRef } from "react";
 export default function Messages({ messages }: { messages: Message[] }) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   return (
-    <div className="border-2 border-gray-600 p-6 rounded-lg overflow-y-auto flex-grow flex flex-col justify-end bg-gray-700">
+    <div className="border-2 border-gray-600 p-6 rounded-lg overflow-y-scroll flex-grow flex flex-col justify-end bg-gray-700">
       {messages.map((msg, index) => (
         <div
           key={index}
