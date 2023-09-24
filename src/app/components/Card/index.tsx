@@ -45,9 +45,6 @@ export const Card: FC<ICardProps> = ({ card, selected }) => {
             {/* Always display the page content */}
             <ReactMarkdown>{card.pageContent}</ReactMarkdown>
 
-            {/* Display the chunk if it exists */}
-            {card.metadata.chunk && <ReactMarkdown className="mb-2">{card.metadata.chunk}</ReactMarkdown>}
-
             {/* Display the relevance percentage if score exists */}
             {relevancePercentage && <div className="text-xs mb-2">{relevancePercentage}% relevant</div>}
 
