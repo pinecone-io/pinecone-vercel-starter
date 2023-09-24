@@ -25,7 +25,6 @@ export const RelevantDocs: FC<RelevantDocsProps> = ({ relevantDocs }) => {
                     pageContent: doc.metadata.chunk,
                     metadata: {
                         hash: doc.metadata.hash,
-                        chunk: doc.metadata.chunk,
                         text: doc.metadata.text,
                         url: doc.metadata.url
                     },

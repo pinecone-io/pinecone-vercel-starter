@@ -7,7 +7,6 @@ export interface ICard {
     values?: any[];
     metadata: {
         hash: string;
-        chunk?: string;
         text?: string;
         url?: string;
     };
