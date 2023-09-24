@@ -15,12 +15,4 @@ export const urls = [{
   title: "Matisee Thybulle",
   seeded: false,
   loading: false,
-},
-
-{
-  url: "https://www.skysports.com/premier-league-news",
-  title: "Sky Spots news",
-  seeded: false,
-  loading: false,
-}
-]
+}]
