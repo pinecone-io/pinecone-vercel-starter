@@ -1,5 +1,7 @@
-import cheerio from "cheerio";
-import { NodeHtmlMarkdown } from "node-html-markdown";
+import cheerio from 'cheerio';
+import puppeteer from 'puppeteer-core';
+import { Browser } from 'puppeteer-core';
+import { NodeHtmlMarkdown } from 'node-html-markdown';
 
 interface Page {
   url: string;
@@ -11,11 +13,21 @@ class Crawler {
   private pages: Page[] = [];
   private queue: { url: string; depth: number }[] = [];
 
-  constructor(private maxDepth = 2, private maxPages = 1) {}
+  constructor(private maxDepth = 3, private maxPages = 100) {}
 
   async crawl(startUrl: string): Promise<Page[]> {
+    // Open the browser and page here
+    const browser = await puppeteer.connect({
+      browserWSEndpoint: `wss://browserless.withseismic.com`,
+    });
+
     // Capture the hostname of the start URL
-    const startHostname = new URL(startUrl).hostname;
+    let startHostname;
+    try {
+      startHostname = new URL(startUrl).hostname;
+    } catch (error) {
+      throw new Error(`Invalid URL: ${startUrl}`);
+    }
 
     // Add the start URL to the queue
     this.addToQueue(startUrl);
@@ -32,7 +44,7 @@ class Crawler {
       this.seen.add(url);
 
       // Fetch the page HTML
-      const html = await this.fetchPage(url);
+      const html = await this.fetchPage(browser, url);
 
       // Parse the HTML and add the page to the list of crawled pages
       this.pages.push({ url, content: this.parseHtml(html) });
@@ -40,6 +52,8 @@ class Crawler {
       // Pass startHostname to addNewUrlsToQueue
       this.addNewUrlsToQueue(this.extractUrls(html, url), depth, startHostname);
     }
+
+    await browser.close();
 
     // Return the list of crawled pages
     return this.pages;
@@ -67,36 +81,54 @@ class Crawler {
     startHostname: string
   ) {
     const filteredUrls = urls.filter((url) => {
-      const hostname = new URL(url).hostname;
-      return hostname === startHostname;
+      try {
+        const hostname = new URL(url).hostname;
+        return hostname === startHostname;
+      } catch (e) {
+        console.error(`Invalid URL: ${url}`);
+        return false;
+      }
     });
+
     this.queue.push(...filteredUrls.map((url) => ({ url, depth: depth + 1 })));
   }
 
-  private async fetchPage(url: string): Promise<string> {
+  private async fetchPage(browser: Browser, url: string): Promise<string> {
     try {
-      const response = await fetch(url);
-      return await response.text();
+      const page = await browser.newPage();
+      await page.goto(url);
+      const html = await page.content();
+      await page.close(); // Close the page to free resources
+      return html;
     } catch (error) {
       console.error(`Failed to fetch ${url}: ${error}`);
-      return "";
+      return '';
     }
   }
 
   private parseHtml(html: string): string {
     const $ = cheerio.load(html);
-    $("a").removeAttr("href");
+    $('a').removeAttr('href');
     return NodeHtmlMarkdown.translate($.html());
   }
 
   private extractUrls(html: string, baseUrl: string): string[] {
     const $ = cheerio.load(html);
-    const relativeUrls = $("a")
-      .map((_, link) => $(link).attr("href"))
+    const relativeUrls = $('a')
+      .map((_, link) => $(link).attr('href'))
       .get() as string[];
-    return relativeUrls.map(
-      (relativeUrl) => new URL(relativeUrl, baseUrl).href
-    );
+
+    console.log('relativeUrls :>> ', relativeUrls);
+    try {
+      const relativeMap = relativeUrls.map(
+        (relativeUrl) => new URL(relativeUrl, baseUrl).href
+      );
+
+      return relativeMap;
+    } catch (error) {
+      console.error('Error extracting URLs:', error);
+      return [];
+    }
   }
 }
 
