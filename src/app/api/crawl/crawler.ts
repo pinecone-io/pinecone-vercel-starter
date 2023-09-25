@@ -1,6 +1,4 @@
 import cheerio from 'cheerio';
-import puppeteer from 'puppeteer-core';
-import { Browser } from 'puppeteer-core';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 
 interface Page {
@@ -13,14 +11,9 @@ class Crawler {
   private pages: Page[] = [];
   private queue: { url: string; depth: number }[] = [];
 
-  constructor(private maxDepth = 3, private maxPages = 100) {}
+  constructor(private maxDepth = 2, private maxPages = 1) {}
 
   async crawl(startUrl: string): Promise<Page[]> {
-    // Open the browser and page here
-    const browser = await puppeteer.connect({
-      browserWSEndpoint: `wss://browserless.withseismic.com`,
-    });
-
     // Capture the hostname of the start URL
     let startHostname;
     try {
@@ -44,7 +37,7 @@ class Crawler {
       this.seen.add(url);
 
       // Fetch the page HTML
-      const html = await this.fetchPage(browser, url);
+      const html = await this.fetchPage(url);
 
       // Parse the HTML and add the page to the list of crawled pages
       this.pages.push({ url, content: this.parseHtml(html) });
@@ -52,8 +45,6 @@ class Crawler {
       // Pass startHostname to addNewUrlsToQueue
       this.addNewUrlsToQueue(this.extractUrls(html, url), depth, startHostname);
     }
-
-    await browser.close();
 
     // Return the list of crawled pages
     return this.pages;
@@ -93,13 +84,10 @@ class Crawler {
     this.queue.push(...filteredUrls.map((url) => ({ url, depth: depth + 1 })));
   }
 
-  private async fetchPage(browser: Browser, url: string): Promise<string> {
+  private async fetchPage(url: string): Promise<string> {
     try {
-      const page = await browser.newPage();
-      await page.goto(url);
-      const html = await page.content();
-      await page.close(); // Close the page to free resources
-      return html;
+      const response = await fetch(url);
+      return await response.text();
     } catch (error) {
       console.error(`Failed to fetch ${url}: ${error}`);
       return '';
@@ -118,7 +106,6 @@ class Crawler {
       .map((_, link) => $(link).attr('href'))
       .get() as string[];
 
-    console.log('relativeUrls :>> ', relativeUrls);
     try {
       const relativeMap = relativeUrls.map(
         (relativeUrl) => new URL(relativeUrl, baseUrl).href
