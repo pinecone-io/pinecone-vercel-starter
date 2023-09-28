@@ -1,12 +1,10 @@
 import { getEmbeddings } from "@/utils/embeddings";
 import { Document, MarkdownTextSplitter, RecursiveCharacterTextSplitter } from "@pinecone-database/doc-splitter";
-import { utils as PineconeUtils, Vector } from "@pinecone-database/pinecone";
+import { Pinecone, Vector } from "@pinecone-database/pinecone";
+import { chunkedUpsert } from '../../utils/chunkedUpsert'
 import md5 from "md5";
-import { getPineconeClient } from "@/utils/pinecone";
 import { Crawler, Page } from "./crawler";
 import { truncateStringByBytes } from "@/utils/truncateString"
-
-const { chunkedUpsert, createIndexIfNotExists } = PineconeUtils
 
 interface SeedOptions {
   splittingMethod: string
@@ -16,11 +14,10 @@ interface SeedOptions {
 
 type DocumentSplitter = RecursiveCharacterTextSplitter | MarkdownTextSplitter
 
-
 async function seed(url: string, limit: number, indexName: string, options: SeedOptions) {
   try {
     // Initialize the Pinecone client
-    const pinecone = await getPineconeClient();
+    const pinecone = new Pinecone();
 
     // Destructure the options object
     const { splittingMethod, chunkSize, chunkOverlap } = options;
@@ -39,8 +36,17 @@ async function seed(url: string, limit: number, indexName: string, options: Seed
     const documents = await Promise.all(pages.map(page => prepareDocument(page, splitter)));
 
     // Create Pinecone index if it does not exist
-    await createIndexIfNotExists(pinecone!, indexName, 1536);
-    const index = pinecone && pinecone.Index(indexName);
+    const indexList = await pinecone.listIndexes();
+    const indexExists = indexList.some(index => index.name === indexName)
+    if (!indexExists) {
+      await pinecone.createIndex({
+        name: indexName,
+        dimension: 1536,
+        waitUntilReady: true,
+      });
+    }
+
+    const index = pinecone.Index(indexName)
 
     // Get the vector embeddings for the documents
     const vectors = await Promise.all(documents.flat().map(embedDocument));
