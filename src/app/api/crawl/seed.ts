@@ -1,12 +1,12 @@
 import { getEmbeddings } from "@/utils/embeddings";
 import { Document, MarkdownTextSplitter, RecursiveCharacterTextSplitter } from "@pinecone-database/doc-splitter";
-import { utils as PineconeUtils, Vector } from "@pinecone-database/pinecone";
 import md5 from "md5";
-import { getPineconeClient } from "@/utils/pinecone";
+import { Pinecone } from '@pinecone-database/pinecone';
+import type { PineconeRecord } from '@pinecone-database/pinecone';
+import type { Metadata } from '../../utils/pinecone'
 import { Crawler, Page } from "./crawler";
-import { truncateStringByBytes } from "@/utils/truncateString"
-
-const { chunkedUpsert, createIndexIfNotExists } = PineconeUtils
+import { truncateStringByBytes } from "@/utils/truncateString";
+import { chunkedUpsert } from "./util";
 
 interface SeedOptions {
   splittingMethod: string
@@ -16,11 +16,10 @@ interface SeedOptions {
 
 type DocumentSplitter = RecursiveCharacterTextSplitter | MarkdownTextSplitter
 
-
 async function seed(url: string, limit: number, indexName: string, options: SeedOptions) {
   try {
-    // Initialize the Pinecone client
-    const pinecone = await getPineconeClient();
+    // Instantiate a Pinecone client
+    const pinecone = new Pinecone();
 
     // Destructure the options object
     const { splittingMethod, chunkSize, chunkOverlap } = options;
@@ -39,8 +38,21 @@ async function seed(url: string, limit: number, indexName: string, options: Seed
     const documents = await Promise.all(pages.map(page => prepareDocument(page, splitter)));
 
     // Create Pinecone index if it does not exist
-    await createIndexIfNotExists(pinecone!, indexName, 1536);
-    const index = pinecone && pinecone.Index(indexName);
+    await pinecone.createIndex({
+      name: indexName,
+
+      // This dimension must match the output of the embedding model
+      dimension: 1536,
+
+      // This option tells the client not to throw if the index already exists
+      suppressConflicts: true,
+
+      // This option tells the client to poll until the index is ready to receive
+      // data operations
+      waitUntilReady: true
+    })
+
+    const index = pinecone.index<Metadata>(indexName);
 
     // Get the vector embeddings for the documents
     const vectors = await Promise.all(documents.flat().map(embedDocument));
@@ -56,7 +68,7 @@ async function seed(url: string, limit: number, indexName: string, options: Seed
   }
 }
 
-async function embedDocument(doc: Document): Promise<Vector> {
+async function embedDocument(doc: Document): Promise<PineconeRecord<Metadata>> {
   try {
     // Generate OpenAI embeddings for the document content
     const embedding = await getEmbeddings(doc.pageContent);
@@ -74,7 +86,7 @@ async function embedDocument(doc: Document): Promise<Vector> {
         url: doc.metadata.url as string, // The URL where the document was found
         hash: doc.metadata.hash as string // The hash of the document content
       }
-    } as Vector;
+    };
   } catch (error) {
     console.log("Error embedding document: ", error)
     throw error
@@ -109,8 +121,5 @@ async function prepareDocument(page: Page, splitter: DocumentSplitter): Promise<
     };
   });
 }
-
-
-
 
 export default seed;
