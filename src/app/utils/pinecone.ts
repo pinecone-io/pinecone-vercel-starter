@@ -1,7 +1,7 @@
 import { Pinecone, type ScoredPineconeRecord } from "@pinecone-database/pinecone";
 
 // The function `getMatchesFromEmbeddings` is used to retrieve matches for the given embeddings
-const getMatchesFromEmbeddings = async (embeddings: number[], topK: number, namespace: string): Promise<ScoredPineconeRecord[]> => {
+const getMatchesFromEmbeddings = async (embeddings: number[], topK: number, namespace: string): Promise<ScoredPineconeRecord<Metadata>[]> => {
   // Obtain a client for Pinecone
   const pinecone = new Pinecone();
 
