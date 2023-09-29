@@ -1,6 +1,6 @@
 import { getEmbeddings } from "@/utils/embeddings";
 import { Document, MarkdownTextSplitter, RecursiveCharacterTextSplitter } from "@pinecone-database/doc-splitter";
-import { Pinecone, Vector } from "@pinecone-database/pinecone";
+import { Pinecone, PineconeRecord } from "@pinecone-database/pinecone";
 import { chunkedUpsert } from '../../utils/chunkedUpsert'
 import md5 from "md5";
 import { Crawler, Page } from "./crawler";
@@ -62,7 +62,7 @@ async function seed(url: string, limit: number, indexName: string, options: Seed
   }
 }
 
-async function embedDocument(doc: Document): Promise<Vector> {
+async function embedDocument(doc: Document): Promise<PineconeRecord> {
   try {
     // Generate OpenAI embeddings for the document content
     const embedding = await getEmbeddings(doc.pageContent);
@@ -80,7 +80,7 @@ async function embedDocument(doc: Document): Promise<Vector> {
         url: doc.metadata.url as string, // The URL where the document was found
         hash: doc.metadata.hash as string // The hash of the document content
       }
-    } as Vector;
+    } as PineconeRecord;
   } catch (error) {
     console.log("Error embedding document: ", error)
     throw error
