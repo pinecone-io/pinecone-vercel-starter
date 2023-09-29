@@ -18,6 +18,8 @@ jobs:
         node-version: 18
     - name: Install dependencies
       run: npm ci
+    - name: Build application
+      run: npm run build
     - name: Start server
       run: npm start &
     - name: Install Playwright Browsers
@@ -30,4 +32,3 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
-
