@@ -1,45 +1,41 @@
-import { PineconeClient, ScoredVector } from "@pinecone-database/pinecone";
+import { Pinecone, type ScoredPineconeRecord } from "@pinecone-database/pinecone";
 
-let pinecone: PineconeClient | null = null;
-
-export const getPineconeClient = async () => {
-  if (!pinecone) {
-    pinecone = new PineconeClient();
-    await pinecone.init({
-      environment: process.env.PINECONE_ENVIRONMENT!,
-      apiKey: process.env.PINECONE_API_KEY!,
-    });
-  }
-  return pinecone
+export type Metadata = {
+  url: string,
+  text: string,
+  chunk: string,
+  hash: string
 }
 
 // The function `getMatchesFromEmbeddings` is used to retrieve matches for the given embeddings
-const getMatchesFromEmbeddings = async (embeddings: number[], topK: number, namespace: string): Promise<ScoredVector[]> => {
+const getMatchesFromEmbeddings = async (embeddings: number[], topK: number, namespace: string): Promise<ScoredPineconeRecord<Metadata>[]> => {
   // Obtain a client for Pinecone
-  const pinecone = await getPineconeClient();
+  const pinecone = new Pinecone();
 
-  // Retrieve the list of indexes
+  const indexName: string = process.env.PINECONE_INDEX || '';
+  if (indexName === '') {
+    throw new Error('PINECONE_INDEX environment variable not set')
+  }
+
+  // Retrieve the list of indexes to check if expected index exists
   const indexes = await pinecone.listIndexes()
-
-  // Check if the desired index is present, else throw an error
-  if (!indexes.includes(process.env.PINECONE_INDEX!)) {
-    throw (new Error(`Index ${process.env.PINECONE_INDEX} does not exist`))
+  if (indexes.filter(i => i.name === indexName).length !== 1) {
+    throw new Error(`Index ${indexName} does not exist`)
   }
 
   // Get the Pinecone index
-  const index = pinecone!.Index(process.env.PINECONE_INDEX!);
+  const index = pinecone!.Index<Metadata>(indexName);
 
-  // Define the query request
-  const queryRequest = {
-    vector: embeddings,
-    topK,
-    includeMetadata: true,
-    namespace
-  }
+  // Get the namespace
+  const pineconeNamespace = index.namespace(namespace ?? '')
 
   try {
     // Query the index with the defined request
-    const queryResult = await index.query({ queryRequest })
+    const queryResult = await pineconeNamespace.query({
+      vector: embeddings,
+      topK,
+      includeMetadata: true,
+    })
     return queryResult.matches || []
   } catch (e) {
     // Log the error and throw it
