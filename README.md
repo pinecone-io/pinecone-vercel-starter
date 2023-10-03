@@ -421,7 +421,7 @@ const getMatchesFromEmbeddings = async (embeddings: number[], topK: number, name
   } catch (e) {
     // Log the error and throw it
     console.log("Error querying embeddings: ", e)
-    throw (new Error(`Error querying embeddings: ${e}`,))
+    throw new Error(`Error querying embeddings: ${e}`)
   }
 }
 ```
