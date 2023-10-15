@@ -15,4 +15,11 @@ export const urls = [{
   title: "Matisee Thybulle",
   seeded: false,
   loading: false,
-}]
+},
+{
+  url: "https://www.aljazeera.com/news/liveblog/2023/10/14/israel-hamas-war-live-us-moves-second-aircraft-carrier-to-mediterranean",
+  title: "Israeli-Palestinian conflice",
+  seeded: false,
+  loading: false,
+},
+]

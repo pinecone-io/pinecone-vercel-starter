@@ -1,80 +1,140 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-
 @keyframes slideInFromBottom {
-  0% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .slide-in-bottom {
-  animation: slideInFromBottom 0.3s ease-out;
+    animation: slideInFromBottom 0.3s ease-out;
 }
 
 .input-glow {
-  box-shadow: 0 0 3px #4a5568, 0 0 5px #4a5568;
+    box-shadow: 0 0 3px #4a5568, 0 0 5px #4a5568;
 }
 
 .input-glow:hover {
-  box-shadow: 0 0 5px #87f4f6, 0 0 10px #8b9ebe;
+    box-shadow: 0 0 5px #87f4f6, 0 0 10px #8b9ebe;
 }
 
 .message-glow {
-  box-shadow: 0 0 3px #4a5568, 0 0 5px #4a5568;
+    box-shadow: 0 0 3px #4a5568, 0 0 5px #4a5568;
 }
 
 .message-glow:hover {
-  box-shadow: 0 0 3px #5eabac, 0 0 4px #8b9ebe;
+    box-shadow: 0 0 3px #5eabac, 0 0 4px #8b9ebe;
 }
 
 @keyframes glimmer {
-  0% {
-    background-position: -200px;
-  }
-  100% {
-    background-position: calc(200px + 100%);
-  }
+    0% {
+        background-position: -200px;
+    }
+    100% {
+        background-position: calc(200px + 100%);
+    }
 }
 
 @keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
 }
 
 .shimmer {
-  animation: glimmer 2s infinite linear;
-  background: rgb(82, 82, 91);
-  background: linear-gradient(
-    to right,
-    darkgray 10%,
-    rgb(130, 129, 129) 50%,
-    rgba(124, 123, 123, 0.816) 90%
-  );
-  background-size: 200px 100%;
-  background-repeat: no-repeat;
-  /* color: transparent; */
+    animation: glimmer 2s infinite linear;
+    background: rgb(82, 82, 91);
+    background: linear-gradient( to right, darkgray 10%, rgb(130, 129, 129) 50%, rgba(124, 123, 123, 0.816) 90%);
+    background-size: 200px 100%;
+    background-repeat: no-repeat;
+    /* color: transparent; */
 }
 
 @keyframes pulse {
-  0%,
-  100% {
-    color: white;
-  }
-  50% {
-    color: #f59e0b; /* Tailwind's yellow-500 */
-  }
+    0%,
+    100% {
+        color: white;
+    }
+    50% {
+        color: #f59e0b;
+        /* Tailwind's yellow-500 */
+    }
 }
 
 .animate-pulse-once {
-  animation: pulse 5s cubic-bezier(0, 0, 0.2, 1) 1;
+    animation: pulse 5s cubic-bezier(0, 0, 0.2, 1) 1;
+}
+
+
+/* Applying styles only to subsequent paragraphs and not the first */
+
+.markdown p:not(:first-of-type) {
+    @apply mt-4;
+}
+
+.markdown p {
+    @apply text-gray-300 leading-relaxed;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+    @apply mt-6 text-gray-100 font-semibold;
+}
+
+.markdown h1 {
+    @apply text-2xl;
+}
+
+.markdown h2 {
+    @apply text-xl;
+}
+
+.markdown h3 {
+    @apply text-lg;
+}
+
+
+/* For unordered lists */
+
+.markdown ul {
+    @apply list-decimal mt-4 pl-5;
+}
+
+.markdown ul li:before {
+    @apply text-gray-400;
+    content: "•";
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+
+/* For ordered lists */
+
+.markdown ol {
+    @apply list-decimal pl-5;
+}
+
+
+/* Aesthetic dividers between list items */
+
+.markdown li:not(:last-child) {
+    @apply border-b border-gray-600 py-2;
+}
+
+.markdown blockquote {
+    @apply mt-4 border-l-4 pl-4 italic text-gray-400 border-gray-500;
 }
