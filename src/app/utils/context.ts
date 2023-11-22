@@ -25,7 +25,7 @@ export const getContext = async (message: string, namespace: string, maxTokens =
     return qualifyingDocs
   }
 
-  let docs = matches ? qualifyingDocs.map(match => (match.metadata as Metadata).chunk) : [];
+  let docs = matches ? qualifyingDocs.map(match => (match.metadata as Metadata).text) : [];
   // Join all the chunks of text together, truncate to the maximum number of tokens, and return the result
   return docs.join("\n").substring(0, maxTokens)
 }
