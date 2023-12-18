@@ -18,8 +18,8 @@ const getMatchesFromEmbeddings = async (embeddings: number[], topK: number, name
   }
 
   // Retrieve the list of indexes to check if expected index exists
-  const indexes = await pinecone.listIndexes()
-  if (indexes.filter(i => i.name === indexName).length !== 1) {
+  const indexList = await pinecone.listIndexes()
+  if (indexList.indexes?.filter(i => i.name === indexName).length !== 1) {
     throw new Error(`Index ${indexName} does not exist`)
   }
 
