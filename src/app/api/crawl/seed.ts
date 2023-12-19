@@ -37,11 +37,17 @@ async function seed(url: string, limit: number, indexName: string, options: Seed
 
     // Create Pinecone index if it does not exist
     const indexList = await pinecone.listIndexes();
-    const indexExists = indexList.some(index => index.name === indexName)
+    const indexExists = indexList.indexes?.some(index => index.name === indexName)
     if (!indexExists) {
       await pinecone.createIndex({
         name: indexName,
         dimension: 1536,
+        spec: {
+          serverless: {
+            region: 'us-west-2',
+            cloud: 'aws',
+          }
+        },
         waitUntilReady: true,
       });
     }

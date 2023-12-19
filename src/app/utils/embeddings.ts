@@ -12,7 +12,7 @@ export async function getEmbeddings(input: string) {
       model: "text-embedding-ada-002",
       input: input.replace(/\n/g, ' ')
     })
-
+    
     const result = await response.json();
     return result.data[0].embedding as number[]
 
