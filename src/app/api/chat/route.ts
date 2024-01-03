@@ -14,13 +14,16 @@ export const runtime = 'edge'
 export async function POST(req: Request) {
   try {
 
-    const { messages } = await req.json()
+    const { messages, withContext } = await req.json()
 
     // Get the last message
     const lastMessage = messages[messages.length - 1]
 
+
     // Get the context from the last message
-    const context = await getContext(lastMessage.content, '')
+    const context = withContext ? await getContext(lastMessage.content, '') : ''
+
+    console.log("withContext", context)
 
 
     const prompt = [

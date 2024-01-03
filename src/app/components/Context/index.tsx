@@ -103,7 +103,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
       <div className="flex flex-column w-full" style={{ ...style.textHeaderWrapper }}>
         <div className="mb-3 w-full">
           <h4 style={{ fontWeight: 700, marginBottom: 7 }}>Select demo url to index</h4>
-          <Select label="URL" onChange={handleUrlChange} autoheight={true} size="lg" selected={(element) => {
+          <Select label="URL" onChange={handleUrlChange} size="lg" selected={(element) => {
             const title = urls.find((u) => u.url === url)?.title
             return <div>{title}</div>
           }
@@ -115,7 +115,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
 
         <div className="mb-3 w-full">
           <h4 style={{ fontWeight: 700, marginBottom: 7 }}>Splitting method</h4>
-          <Select label="Splitting method" className="flex flex-col gap-6" onChange={handleSplittingMethodChange} autoheight={true} size="lg" >
+          <Select label="Splitting method" className="flex flex-col gap-6" onChange={handleSplittingMethodChange} size="lg" >
             <Option value="recursive">Recursive Text Splitting</Option>
             <Option value="markdown">Markdown Splitting</Option>
           </Select>
@@ -124,7 +124,17 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
         <Button
           className="my-2 duration-100 button-primary"
           style={{ backgroundColor: "#1B17F5", color: "white", fontWeight: 500, padding: "12px 32px" }}
-          onClick={() => clearIndex(setEntries, setCards)}
+
+          onClick={() => {
+            crawlDocument(
+              url,
+              setEntries,
+              setCards,
+              splittingMethod,
+              chunkSize,
+              overlap
+            )
+          }}
         >
           Embed and upsert
         </Button>
@@ -132,7 +142,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
 
       <div className="flex flex-wrap w-full mt-5" style={{ paddingBottom: 8, borderBottom: "1px solid #738FAB1F" }}>
         <div className="uppercase" style={{ fontSize: 12 }}>Index records</div>
-        <div style={{ color: "#1B17F5", fontSize: 12 }} className="right ml-auto">Clear</div>
+        <div style={{ color: "#1B17F5", fontSize: 12 }} className="right ml-auto" onClick={() => clearIndex(setEntries, setCards)}>Clear</div>
       </div>
 
       {/* <div className="flex flex-col items-start sticky top-0 w-full">

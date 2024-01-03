@@ -15,38 +15,38 @@ const Page: React.FC = () => {
   const [context, setContext] = useState<string[] | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    onFinish: async () => {
-      setGotMessages(true);
-    },
-  });
+  // const { messages, input, handleInputChange, handleSubmit } = useChat({
+  //   onFinish: async () => {
+  //     setGotMessages(true);
+  //   },
+  // });
 
-  const prevMessagesLengthRef = useRef(messages.length);
+  // const prevMessagesLengthRef = useRef(messages.length);
 
-  const handleMessageSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    handleSubmit(e);
-    setContext(null);
-    setGotMessages(false);
-  };
+  // const handleMessageSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   handleSubmit(e);
+  //   setContext(null);
+  //   setGotMessages(false);
+  // };
 
-  useEffect(() => {
-    const getContext = async () => {
-      const response = await fetch("/api/context", {
-        method: "POST",
-        body: JSON.stringify({
-          messages,
-        }),
-      });
-      const { context } = await response.json();
-      setContext(context.map((c: any) => c.id));
-    };
-    if (gotMessages && messages.length >= prevMessagesLengthRef.current) {
-      getContext();
-    }
+  // useEffect(() => {
+  //   // const getContext = async () => {
+  //   //   const response = await fetch("/api/context", {
+  //   //     method: "POST",
+  //   //     body: JSON.stringify({
+  //   //       messages,
+  //   //     }),
+  //   //   });
+  //   //   const { context } = await response.json();
+  //   //   setContext(context.map((c: any) => c.id));
+  //   // };
+  //   // if (gotMessages && messages.length >= prevMessagesLengthRef.current) {
+  //   //   getContext();
+  //   // }
 
-    prevMessagesLengthRef.current = messages.length;
-  }, [messages, gotMessages]);
+  //   prevMessagesLengthRef.current = messages.length;
+  // }, [messages, gotMessages]);
 
   return (
     <div className="flex flex-col justify-between h-screen bg-whitemx-auto max-w-full">
@@ -59,14 +59,14 @@ const Page: React.FC = () => {
       <div className="flex w-full flex-grow overflow-hidden relative">
         <div style={{
           backgroundColor: "#FBFBFC"
-        }} className="absolute transform translate-x-full transition-transform duration-500 ease-in-out right-0 w-2/3 h-full bg-white overflow-y-auto lg:static lg:translate-x-0 lg:w-2/5 lg:mx-2">
+        }} className="absolute transform translate-x-full transition-transform duration-500 ease-in-out right-0 w-2/3 h-full bg-white overflow-y-auto lg:static lg:translate-x-0 lg:w-2/5">
           <Context className="" selected={context} />
         </div>
         <Chat
-          input={input}
-          handleInputChange={handleInputChange}
-          handleMessageSubmit={handleMessageSubmit}
-          messages={messages}
+        // input={input}
+        // handleInputChange={handleInputChange}
+        // handleMessageSubmit={handleMessageSubmit}
+        // messages={messages}
         />
 
         <button
