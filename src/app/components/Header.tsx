@@ -10,17 +10,17 @@ export default function Header({ className }: { className?: string }) {
       <Image
         src={PineconeLogo}
         alt="pinecone-logo"
-        width="230"
+        width="160"
         height="50"
-        className="ml-3"
+
       />{" "}
-      <div className="text-4xl ml-3 mr-3">+</div>
+      <div className="text-3xl ml-3 mr-3">/</div>
       <Image
         src={VercelLogo}
         alt="vercel-logo"
-        width="160"
-        height="50"
-        className="mr-3 mt-3"
+        width="105.719"
+        height="23.895"
+        className="mr-3 mt-2"
       />
     </header>
   );

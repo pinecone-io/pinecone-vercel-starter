@@ -18,20 +18,20 @@
 }
 
 .input-glow {
-  box-shadow: 0 0 3px #4a5568, 0 0 5px #4a5568;
+  box-shadow: 0 0 1px #738FAB80, 0 0 1px #738FAB80;
 }
 
 .input-glow:hover {
-  box-shadow: 0 0 5px #87f4f6, 0 0 10px #8b9ebe;
+  box-shadow: 0 0 1px #87f4f6, 0 0 2 #8b9ebe;
 }
 
-.message-glow {
-  box-shadow: 0 0 3px #4a5568, 0 0 5px #4a5568;
+/* .message-glow {
+  box-shadow: 0 0 3px #738FAB80, 0 0 5px #738FAB80;
 }
 
 .message-glow:hover {
   box-shadow: 0 0 3px #5eabac, 0 0 4px #8b9ebe;
-}
+} */
 
 @keyframes glimmer {
   0% {

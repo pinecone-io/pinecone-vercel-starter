@@ -3,11 +3,33 @@ import { urls } from "./urls";
 import UrlButton from "./UrlButton";
 import { Card, ICard } from "./Card";
 import { clearIndex, crawlDocument } from "./utils";
+import { Select, Option } from "@material-tailwind/react";
+import type { SelectProps } from "@material-tailwind/react";
 
 import { Button } from "./Button";
+import Header from "../Header";
 interface ContextProps {
   className: string;
   selected: string[] | null;
+}
+
+const style = {
+  contextWrapper: {
+    display: "flex",
+
+    padding: "var(--spacer-huge, 64px) var(--spacer-m, 32px) var(--spacer-m, 32px) var(--spacer-m, 32px)",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: "var(--Spacing-0, 0px)",
+    alignSelf: "stretch",
+    backgroundColor: "#FBFBFC"
+  },
+  textHeaderWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    alignSelf: "stretch"
+  }
 }
 
 export const Context: React.FC<ContextProps> = ({ className, selected }) => {
@@ -17,6 +39,8 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
   const [splittingMethod, setSplittingMethod] = useState("markdown");
   const [chunkSize, setChunkSize] = useState(256);
   const [overlap, setOverlap] = useState(1);
+
+  const [url, setUrl] = useState("");
 
   // Scroll to selected card
   useEffect(() => {
@@ -32,29 +56,86 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
     </label>
   );
 
+  const handleUrlChange = (e) => {
+    setUrl(e)
+  }
+
+  const handleSplittingMethodChange = (e) => {
+
+  }
+
   const buttons = entries.map((entry, key) => (
-    <div className="" key={`${key}-${entry.loading}`}>
-      <UrlButton
-        entry={entry}
-        onClick={() =>
-          crawlDocument(
-            entry.url,
-            setEntries,
-            setCards,
-            splittingMethod,
-            chunkSize,
-            overlap
-          )
-        }
-      />
-    </div>
+
+    <Option
+      key={key} value={entry.url}
+      className="flex items-center gap-2"
+    // onClick={() =>
+    //   crawlDocument(
+    //     entry.url,
+    //     setEntries,
+    //     setCards,
+    //     splittingMethod,
+    //     chunkSize,
+    //     overlap
+    //   )
+    // }
+    ><div>
+        <div style={{ width: '100%' }}>{entry.title}</div>
+        <div style={{ width: '30%', fontSize: 'small', color: 'grey', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{entry.url}</div>
+      </div>
+    </Option>
+
   ));
 
   return (
     <div
-      className={`flex flex-col border-2 overflow-y-auto rounded-lg border-gray-500 w-full ${className}`}
+      className="w-full"
+      style={{ ...style.contextWrapper, flexDirection: "column" as "column" }}
     >
-      <div className="flex flex-col items-start sticky top-0 w-full">
+
+      <div style={{ ...style.textHeaderWrapper, flexDirection: "column" as "column" }} className="w-full">
+        <Header />
+        <div style={{ marginTop: 24, marginBottom: 24 }}>
+          This RAG chatbot uses Pinecone and Vercel's AI SDK to demonstrate a URL crawl, data chunking and embedding, and semantic questioning.
+        </div>
+
+      </div>
+      <div className="flex flex-column w-full" style={{ ...style.textHeaderWrapper }}>
+        <div className="mb-3 w-full">
+          <h4 style={{ fontWeight: 700, marginBottom: 7 }}>Select demo url to index</h4>
+          <Select label="URL" onChange={handleUrlChange} autoheight={true} size="lg" selected={(element) => {
+            const title = urls.find((u) => u.url === url)?.title
+            return <div>{title}</div>
+          }
+
+          } >
+            {buttons}
+          </Select>
+        </div>
+
+        <div className="mb-3 w-full">
+          <h4 style={{ fontWeight: 700, marginBottom: 7 }}>Splitting method</h4>
+          <Select label="Splitting method" className="flex flex-col gap-6" onChange={handleSplittingMethodChange} autoheight={true} size="lg" >
+            <Option value="recursive">Recursive Text Splitting</Option>
+            <Option value="markdown">Markdown Splitting</Option>
+          </Select>
+        </div>
+
+        <Button
+          className="my-2 duration-100 button-primary"
+          style={{ backgroundColor: "#1B17F5", color: "white", fontWeight: 500, padding: "12px 32px" }}
+          onClick={() => clearIndex(setEntries, setCards)}
+        >
+          Embed and upsert
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap w-full mt-5" style={{ paddingBottom: 8, borderBottom: "1px solid #738FAB1F" }}>
+        <div className="uppercase" style={{ fontSize: 12 }}>Index records</div>
+        <div style={{ color: "#1B17F5", fontSize: 12 }} className="right ml-auto">Clear</div>
+      </div>
+
+      {/* <div className="flex flex-col items-start sticky top-0 w-full">
         <div className="flex flex-col items-start lg:flex-row w-full lg:flex-wrap p-2">
           {buttons}
         </div>
@@ -123,7 +204,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
           cards.map((card, key) => (
             <Card key={key} card={card} selected={selected} />
           ))}
-      </div>
+      </div> */}
     </div>
   );
 };

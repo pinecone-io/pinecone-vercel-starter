@@ -3,6 +3,10 @@ export const metadata = {
   description: "Pinecone - Vercel AI SDK Example",
 };
 
+import { Inter } from 'next/font/google'
+const inter = Inter({ subsets: ['latin'] })
+
+
 import "../global.css";
 
 export default function RootLayout({
@@ -12,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }
