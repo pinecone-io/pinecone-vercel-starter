@@ -1,14 +1,13 @@
-// Chat.tsx
-
 import React, { FormEvent, ChangeEvent, useRef } from "react";
-import Messages from "./Messages";
-import { Message } from "ai/react";
-import ChatWithContext, { ChatInterface } from "./ChatWrapper";
+import ChatWrapper, { ChatInterface } from "./ChatWrapper";
 import ChatInput from "./ChatInput";
+import { Message } from "ai";
 
+interface ChatProps {
+  getContext: (messages: Message[]) => void;
+}
 
-
-const Chat: React.FC = () => {
+const Chat: React.FC<ChatProps> = ({ getContext }) => {
 
   const chatWithContextRef = useRef<ChatInterface | null>(null);
   const chatWithoutContextRef = useRef<ChatInterface | null>(null);
@@ -31,10 +30,10 @@ const Chat: React.FC = () => {
 
       <div className="flex flex-grow">
         <div className="w-1/2">
-          <ChatWithContext ref={chatWithoutContextRef} withContext={true} />
+          <ChatWrapper ref={chatWithoutContextRef} withContext={true} getContext={getContext} />
         </div>
         <div className="w-1/2">
-          <ChatWithContext ref={chatWithContextRef} withContext={false} />
+          <ChatWrapper ref={chatWithContextRef} withContext={false} getContext={getContext} />
         </div>
       </div>
 

@@ -1,3 +1,4 @@
+import { BlueEllipseSvg } from "@/utils/svg/blueEllipse";
 import React, { FC } from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -16,15 +17,17 @@ interface ICardProps {
 export const Card: FC<ICardProps> = ({ card, selected }) => (
   <div
     id={card.metadata.hash}
-    className={`card w-full p-5 m-2 text-white ${selected && selected.includes(card.metadata.hash)
-        ? "bg-gray-600"
-        : "bg-gray-800"
-      } ${selected && selected.includes(card.metadata.hash)
-        ? ""
-        : "opacity-60 hover:opacity-80 transition-opacity duration-300 ease-in-out"
+    className={`card w-full p-5 m-2 ${selected && selected.includes(card.metadata.hash)
+      ? ""
+      : "opacity-80 hover:opacity-100 transition-opacity duration-300 ease-in-out"
       }`}
   >
     <ReactMarkdown>{card.pageContent}</ReactMarkdown>
-    <b className="text-xs">{card.metadata.hash}</b>
+    <div className="flex">
+      {selected && selected.includes(card.metadata.hash) && <BlueEllipseSvg />}
+      <b className="text-xs">
+        ID: {card.metadata.hash}
+      </b>
+    </div>
   </div>
 );

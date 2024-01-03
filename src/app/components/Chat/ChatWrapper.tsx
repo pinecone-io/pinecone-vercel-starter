@@ -1,28 +1,33 @@
-// Chat.tsx
-
-import React, { RefObject, FormEvent, ChangeEvent, forwardRef, useImperativeHandle, useRef } from "react";
+import React, { FormEvent, ChangeEvent, forwardRef, useImperativeHandle, useRef, Ref } from "react";
 import Messages from "./Messages";
 import { Message, useChat } from "ai/react";
 
 export interface ChatInterface {
     handleMessageSubmit: (e: FormEvent<HTMLFormElement>) => void;
     handleInputUpdated: (event: ChangeEvent<HTMLInputElement>) => void;
-    ref: RefObject<ChatInterface>;
+    ref: Ref<ChatInterface>;
     withContext: boolean;
 }
 
 interface ChatProps {
     withContext: boolean;
+    getContext: (messages: Message[]) => void;
+    ref: Ref<ChatInterface>
 }
 
-const Chat: React.FC<ChatProps> = forwardRef(({ withContext }, ref) => {
+const Chat: React.FC<ChatProps> = forwardRef<ChatInterface, ChatProps>(({ withContext, getContext }, ref) => {
 
-    const { messages, input, handleInputChange, handleSubmit } = useChat({
+    const { messages, handleInputChange, handleSubmit } = useChat({
         body: {
             withContext
         },
         onFinish: async () => {
-            // setGotMessages(true);
+            console.log(withContext, messages.length)
+            if (withContext && messages.length > 0) {
+                console.log(messages)
+                getContext(messages)
+            }
+            // getContext(messages)
         },
     });
 

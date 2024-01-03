@@ -12,13 +12,18 @@ export default function Messages({ messages, withContext }: { messages: Message[
       {messages?.map((msg, index) => (
         <div
           key={index}
-          className={`my-2 p-3 transition-shadow duration-200 flex slide-in-bottom`}
+          className={`my-2 ml-3 pt-2 transition-shadow duration-200 flex slide-in-bottom`}
         >
-          <div className="p-2  flex items-center">
+          <div className="p-2 flex items-start">
             {msg.role === "assistant" ? (withContext ? <PineconeIcon /> : <EllipseIcon />) : <UserIcon />}
           </div>
-          <div className="ml-2 flex items-center">
-            {msg.content}
+          <div className="ml-2 mt-1.5 flex items-center">
+            <div className="flex flex-col">
+              <div className="font-bold">
+                {msg.role === "assistant" ? (withContext ? "Pinecone + OpenAI Model" : "OpenAI Model") : "You"}
+              </div>
+              <div>{msg.content}</div>
+            </div>
           </div>
         </div>
       ))}

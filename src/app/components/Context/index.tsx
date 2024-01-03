@@ -18,7 +18,7 @@ const style = {
     display: "flex",
 
     padding: "var(--spacer-huge, 64px) var(--spacer-m, 32px) var(--spacer-m, 32px) var(--spacer-m, 32px)",
-    flexDirection: "column",
+
     alignItems: "flex-start",
     gap: "var(--Spacing-0, 0px)",
     alignSelf: "stretch",
@@ -51,34 +51,18 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
   const DropdownLabel: React.FC<
     React.PropsWithChildren<{ htmlFor: string }>
   > = ({ htmlFor, children }) => (
-    <label htmlFor={htmlFor} className="text-white p-2 font-bold">
+    <label htmlFor={htmlFor}>
       {children}
     </label>
   );
 
-  const handleUrlChange = (e) => {
-    setUrl(e)
-  }
-
-  const handleSplittingMethodChange = (e) => {
-
-  }
+  const handleUrlChange = (value?: string) => value && setUrl(value)
+  const handleSplittingMethodChange = (value?: string) => value && setSplittingMethod(value)
 
   const buttons = entries.map((entry, key) => (
-
     <Option
       key={key} value={entry.url}
       className="flex items-center gap-2"
-    // onClick={() =>
-    //   crawlDocument(
-    //     entry.url,
-    //     setEntries,
-    //     setCards,
-    //     splittingMethod,
-    //     chunkSize,
-    //     overlap
-    //   )
-    // }
     ><div>
         <div style={{ width: '100%' }}>{entry.title}</div>
         <div style={{ width: '30%', fontSize: 'small', color: 'grey', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{entry.url}</div>
@@ -96,14 +80,14 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
       <div style={{ ...style.textHeaderWrapper, flexDirection: "column" as "column" }} className="w-full">
         <Header />
         <div style={{ marginTop: 24, marginBottom: 24 }}>
-          This RAG chatbot uses Pinecone and Vercel's AI SDK to demonstrate a URL crawl, data chunking and embedding, and semantic questioning.
+          This RAG chatbot uses Pinecone and Vercel&apos;s AI SDK to demonstrate a URL crawl, data chunking and embedding, and semantic questioning.
         </div>
 
       </div>
-      <div className="flex flex-column w-full" style={{ ...style.textHeaderWrapper }}>
+      <div className="flex flex-column w-full" style={{ ...style.textHeaderWrapper, flexDirection: "column", }}>
         <div className="mb-3 w-full">
           <h4 style={{ fontWeight: 700, marginBottom: 7 }}>Select demo url to index</h4>
-          <Select label="URL" onChange={handleUrlChange} size="lg" selected={(element) => {
+          <Select placeholder={""} onChange={handleUrlChange} size="lg" selected={(element) => {
             const title = urls.find((u) => u.url === url)?.title
             return <div>{title}</div>
           }
@@ -115,11 +99,43 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
 
         <div className="mb-3 w-full">
           <h4 style={{ fontWeight: 700, marginBottom: 7 }}>Splitting method</h4>
-          <Select label="Splitting method" className="flex flex-col gap-6" onChange={handleSplittingMethodChange} size="lg" >
-            <Option value="recursive">Recursive Text Splitting</Option>
+          <Select value="markdown" placeholder={""} className="flex flex-col gap-6" onChange={handleSplittingMethodChange} size="lg" >
             <Option value="markdown">Markdown Splitting</Option>
+            <Option value="recursive">Recursive Text Splitting</Option>
           </Select>
         </div>
+        {splittingMethod === "recursive" && (
+          <div className="w-full">
+            <div className="my-4 flex flex-col">
+              <div className="flex flex-col w-full">
+                <DropdownLabel htmlFor="chunkSize">
+                  Chunk Size: <span className="font-bold">{chunkSize}</span>
+                </DropdownLabel>
+                <input
+                  className="p-2"
+                  type="range"
+                  id="chunkSize"
+                  min={1}
+                  max={2048}
+                  onChange={(e) => setChunkSize(parseInt(e.target.value))}
+                />
+              </div>
+              <div className="flex flex-col w-full">
+                <DropdownLabel htmlFor="overlap">
+                  Overlap: <span className="font-bold">{overlap}</span>
+                </DropdownLabel>
+                <input
+                  className="p-2"
+                  type="range"
+                  id="overlap"
+                  min={1}
+                  max={200}
+                  onChange={(e) => setOverlap(parseInt(e.target.value))}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         <Button
           className="my-2 duration-100 button-primary"
@@ -143,6 +159,16 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
       <div className="flex flex-wrap w-full mt-5" style={{ paddingBottom: 8, borderBottom: "1px solid #738FAB1F" }}>
         <div className="uppercase" style={{ fontSize: 12 }}>Index records</div>
         <div style={{ color: "#1B17F5", fontSize: 12 }} className="right ml-auto" onClick={() => clearIndex(setEntries, setCards)}>Clear</div>
+      </div>
+
+      <div className="flex flex-wrap w-full">
+        <div>
+          {cards && cards.length > 0 ? <div className="mt-2">{cards.length} results</div> : <div></div>}
+        </div>
+        {cards &&
+          cards.map((card, key) => (
+            <Card key={key} card={card} selected={selected} />
+          ))}
       </div>
 
       {/* <div className="flex flex-col items-start sticky top-0 w-full">
@@ -209,12 +235,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
           )}
         </div>
       </div>
-      <div className="flex flex-wrap w-full">
-        {cards &&
-          cards.map((card, key) => (
-            <Card key={key} card={card} selected={selected} />
-          ))}
-      </div> */}
+       */}
     </div>
   );
 };
