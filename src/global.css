@@ -78,3 +78,10 @@
 .animate-pulse-once {
   animation: pulse 5s cubic-bezier(0, 0, 0.2, 1) 1;
 }
+
+#chunkSize, #overlap {
+  accent-color: #1B17F5;
+  --inverse-accent-color: #E4E8EA;
+
+}
+

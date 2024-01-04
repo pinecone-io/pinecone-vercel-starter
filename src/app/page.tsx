@@ -7,11 +7,15 @@ import { Context } from "@/components/Context";
 import Chat from "@/components/Chat";
 import InstructionModal from "./components/InstructionModal";
 import { Message } from "ai";
+import { ScoredPineconeRecord } from "@pinecone-database/pinecone";
 
 const Page: React.FC = () => {
   const [gotMessages, setGotMessages] = useState(false);
   const [context, setContext] = useState<string[] | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
+
+  const [checkIndex, setCheckIndex] = useState<boolean>(false);
+  const [totalRecords, setTotalRecords] = useState<number>(0);
 
 
   const getContext = async (messages: Message[]) => {
@@ -21,9 +25,30 @@ const Page: React.FC = () => {
         messages,
       }),
     });
-    const { context } = await response.json();
+    const context = await response.json() as ScoredPineconeRecord[]
     setContext(context.map((c: any) => c.id));
+    return context;
   };
+
+  useEffect(() => {
+    const checkIndex = async () => {
+      const response = await fetch("/api/checkIndex", {
+        method: "POST",
+      });
+      try {
+        const stats = await response.json();
+        setTotalRecords(stats.totalRecordCount);
+        setCheckIndex(true);
+      } catch (e) {
+        console.log(e)
+      }
+    };
+    checkIndex();
+  }, [checkIndex]);
+
+  const refreshIndex = async () => {
+    setCheckIndex(false);
+  }
 
 
   // const { messages, input, handleInputChange, handleSubmit } = useChat({
@@ -71,10 +96,11 @@ const Page: React.FC = () => {
         <div style={{
           backgroundColor: "#FBFBFC"
         }} className="absolute transform translate-x-full transition-transform duration-500 ease-in-out right-0 w-2/3 h-full bg-white overflow-y-auto lg:static lg:translate-x-0 lg:w-2/5">
-          <Context className="" selected={context} />
+          <Context className="" selected={context} refreshIndex={refreshIndex} />
         </div>
         <Chat
           getContext={getContext}
+          showIndexMessage={totalRecords === 0}
         // input={input}
         // handleInputChange={handleInputChange}
         // handleMessageSubmit={handleMessageSubmit}

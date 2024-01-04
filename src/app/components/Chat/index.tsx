@@ -2,12 +2,14 @@ import React, { FormEvent, ChangeEvent, useRef } from "react";
 import ChatWrapper, { ChatInterface } from "./ChatWrapper";
 import ChatInput from "./ChatInput";
 import { Message } from "ai";
+import type { RecordMetadata, ScoredPineconeRecord } from "@pinecone-database/pinecone";
 
 interface ChatProps {
-  getContext: (messages: Message[]) => void;
+  getContext: (messages: Message[]) => Promise<ScoredPineconeRecord<RecordMetadata>[]>;
+  showIndexMessage: boolean;
 }
 
-const Chat: React.FC<ChatProps> = ({ getContext }) => {
+const Chat: React.FC<ChatProps> = ({ getContext, showIndexMessage }) => {
 
   const chatWithContextRef = useRef<ChatInterface | null>(null);
   const chatWithoutContextRef = useRef<ChatInterface | null>(null);
@@ -38,7 +40,7 @@ const Chat: React.FC<ChatProps> = ({ getContext }) => {
       </div>
 
       <div className="w-full">
-        <ChatInput input={input} handleInputChange={onInputChange} handleMessageSubmit={onMessageSubmit} />
+        <ChatInput input={input} handleInputChange={onInputChange} handleMessageSubmit={onMessageSubmit} showIndexMessage={showIndexMessage} />
       </div>
     </div>
   );

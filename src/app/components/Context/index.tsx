@@ -1,24 +1,28 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { urls } from "./urls";
-import UrlButton from "./UrlButton";
 import { Card, ICard } from "./Card";
 import { clearIndex, crawlDocument } from "./utils";
-import { Select, Option } from "@material-tailwind/react";
-import type { SelectProps } from "@material-tailwind/react";
+// import { Select, Option } from "@material-tailwind/react";
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+
+
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { Button } from "./Button";
 import Header from "../Header";
 interface ContextProps {
   className: string;
   selected: string[] | null;
+  refreshIndex: () => void;
 }
 
 const style = {
   contextWrapper: {
     display: "flex",
-
     padding: "var(--spacer-huge, 64px) var(--spacer-m, 32px) var(--spacer-m, 32px) var(--spacer-m, 32px)",
-
     alignItems: "flex-start",
     gap: "var(--Spacing-0, 0px)",
     alignSelf: "stretch",
@@ -29,18 +33,31 @@ const style = {
     flexDirection: "column",
     alignItems: "flex-start",
     alignSelf: "stretch"
+  },
+  entryUrl: {
+    // width: '90%',
+    fontSize: 'small',
+    color: 'grey',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: "400px"
   }
 }
 
-export const Context: React.FC<ContextProps> = ({ className, selected }) => {
+export const Context: React.FC<ContextProps> = ({ className, selected, refreshIndex }) => {
   const [entries, setEntries] = useState(urls);
   const [cards, setCards] = useState<ICard[]>([]);
 
-  const [splittingMethod, setSplittingMethod] = useState("markdown");
-  const [chunkSize, setChunkSize] = useState(256);
-  const [overlap, setOverlap] = useState(1);
+  const [splittingMethod, setSplittingMethod] = useState<string>("markdown");
+  const [chunkSize, setChunkSize] = useState<number>(256);
+  const [overlap, setOverlap] = useState<number>(1);
 
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState<string>(entries[0].url);
+
+  const [clearIndexComplete, setClearIndexCompleteMessageVisible] = useState<boolean>(false)
+  const [crawling, setCrawling] = useState<boolean>(false)
+  const [crawlingDoneVisible, setCrawlingDoneVisible] = useState<boolean>(false)
 
   // Scroll to selected card
   useEffect(() => {
@@ -56,18 +73,31 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
     </label>
   );
 
-  const handleUrlChange = (value?: string) => value && setUrl(value)
-  const handleSplittingMethodChange = (value?: string) => value && setSplittingMethod(value)
+  const handleUrlChange = (event: SelectChangeEvent<typeof url>) => {
+    const {
+      target: { value },
+    } = event;
+
+    setUrl(value)
+  }
+
+  const handleSplittingMethodChange = (event: SelectChangeEvent<typeof splittingMethod>) => {
+    const {
+      target: { value },
+    } = event;
+
+    setSplittingMethod(value)
+  }
+
 
   const buttons = entries.map((entry, key) => (
-    <Option
+    <MenuItem
       key={key} value={entry.url}
-      className="flex items-center gap-2"
-    ><div>
-        <div style={{ width: '100%' }}>{entry.title}</div>
-        <div style={{ width: '30%', fontSize: 'small', color: 'grey', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{entry.url}</div>
+    ><div className="flex-col" >
+        <div>{entry.title}</div>
+        <div style={{ ...style.entryUrl, whiteSpace: 'nowrap' as 'nowrap' }}>{entry.url}</div>
       </div>
-    </Option>
+    </MenuItem>
 
   ));
 
@@ -87,21 +117,29 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
       <div className="flex flex-column w-full" style={{ ...style.textHeaderWrapper, flexDirection: "column", }}>
         <div className="mb-3 w-full">
           <h4 style={{ fontWeight: 700, marginBottom: 7 }}>Select demo url to index</h4>
-          <Select placeholder={""} onChange={handleUrlChange} size="lg" selected={(element) => {
-            const title = urls.find((u) => u.url === url)?.title
-            return <div>{title}</div>
-          }
 
-          } >
+
+
+
+          <Select className="w-full" value={url} onChange={handleUrlChange} MenuProps={{
+            keepMounted: true,
+            PaperProps: {
+              style: {
+                width: 'fit-content',
+              },
+            },
+          }}>
             {buttons}
           </Select>
+
+
         </div>
 
         <div className="mb-3 w-full">
           <h4 style={{ fontWeight: 700, marginBottom: 7 }}>Splitting method</h4>
-          <Select value="markdown" placeholder={""} className="flex flex-col gap-6" onChange={handleSplittingMethodChange} size="lg" >
-            <Option value="markdown">Markdown Splitting</Option>
-            <Option value="recursive">Recursive Text Splitting</Option>
+          <Select value={splittingMethod} className="w-full" onChange={handleSplittingMethodChange} >
+            <MenuItem value="markdown">Markdown Splitting</MenuItem>
+            <MenuItem value="recursive">Recursive Text Splitting</MenuItem>
           </Select>
         </div>
         {splittingMethod === "recursive" && (
@@ -139,10 +177,11 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
 
         <Button
           className="my-2 duration-100 button-primary"
-          style={{ backgroundColor: "#1B17F5", color: "white", fontWeight: 500, padding: "12px 32px" }}
+          style={{ backgroundColor: `${crawlingDoneVisible ? "#15B077" : "#1B17F5"}`, color: "white", fontWeight: 500, padding: "12px 32px", transition: "all 0.5s ease-in-out" }}
 
-          onClick={() => {
-            crawlDocument(
+          onClick={async () => {
+            setCrawling(true)
+            await crawlDocument(
               url,
               setEntries,
               setCards,
@@ -150,16 +189,39 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
               chunkSize,
               overlap
             )
+            setCrawling(false)
+            setCrawlingDoneVisible(true)
+            setTimeout(() => {
+              setCrawlingDoneVisible(false)
+            }, 2000),
+              refreshIndex()
           }}
         >
-          Embed and upsert
+          {!crawling ? (crawlingDoneVisible ? "Success" : "Embed and upsert") : (<div className="flex">
+            <CircularProgress size={20} sx={{
+              color: "white",
+            }} />
+            <div className="ml-5">In progress</div>
+          </div>)}
         </Button>
       </div>
 
       <div className="flex flex-wrap w-full mt-5" style={{ paddingBottom: 8, borderBottom: "1px solid #738FAB1F" }}>
         <div className="uppercase" style={{ fontSize: 12 }}>Index records</div>
-        <div style={{ color: "#1B17F5", fontSize: 12 }} className="right ml-auto" onClick={() => clearIndex(setEntries, setCards)}>Clear</div>
+        <div style={{ color: "#1B17F5", fontSize: 12, cursor: "pointer" }} className="right ml-auto" onClick={async () => {
+          await clearIndex(setEntries, setCards)
+          setClearIndexCompleteMessageVisible(true)
+          refreshIndex()
+          setTimeout(() => {
+            setClearIndexCompleteMessageVisible(false)
+          }, 2000)
+        }}>Clear</div>
       </div>
+      {(
+        <div style={{ fontSize: 12, marginTop: 10, transition: "all 0.5s ease-in-out", transform: `${clearIndexComplete ? "translateY(0%)" : "translateY(60%)"}`, opacity: `${clearIndexComplete ? "1" : "0"}` }}>
+          Index cleared
+        </div>
+      )}
 
       <div className="flex flex-wrap w-full">
         <div>
@@ -171,71 +233,7 @@ export const Context: React.FC<ContextProps> = ({ className, selected }) => {
           ))}
       </div>
 
-      {/* <div className="flex flex-col items-start sticky top-0 w-full">
-        <div className="flex flex-col items-start lg:flex-row w-full lg:flex-wrap p-2">
-          {buttons}
-        </div>
-        <div className="flex-grow w-full px-4">
-          <Button
-            className="w-full my-2 uppercase active:scale-[98%] transition-transform duration-100"
-            style={{
-              backgroundColor: "#4f6574",
-              color: "white",
-            }}
-            onClick={() => clearIndex(setEntries, setCards)}
-          >
-            Clear Index
-          </Button>
-        </div>
-        <div className="flex p-2"></div>
-        <div className="text-left w-full flex flex-col rounded-b-lg bg-gray-600 p-3 subpixel-antialiased">
-          <DropdownLabel htmlFor="splittingMethod">
-            Splitting Method:
-          </DropdownLabel>
-          <div className="relative w-full">
-            <select
-              id="splittingMethod"
-              value={splittingMethod}
-              className="p-2 bg-gray-700 rounded text-white w-full appearance-none hover:cursor-pointer"
-              onChange={(e) => setSplittingMethod(e.target.value)}
-            >
-              <option value="recursive">Recursive Text Splitting</option>
-              <option value="markdown">Markdown Splitting</option>
-            </select>
-          </div>
-          {splittingMethod === "recursive" && (
-            <div className="my-4 flex flex-col">
-              <div className="flex flex-col w-full">
-                <DropdownLabel htmlFor="chunkSize">
-                  Chunk Size: {chunkSize}
-                </DropdownLabel>
-                <input
-                  className="p-2 bg-gray-700"
-                  type="range"
-                  id="chunkSize"
-                  min={1}
-                  max={2048}
-                  onChange={(e) => setChunkSize(parseInt(e.target.value))}
-                />
-              </div>
-              <div className="flex flex-col w-full">
-                <DropdownLabel htmlFor="overlap">
-                  Overlap: {overlap}
-                </DropdownLabel>
-                <input
-                  className="p-2 bg-gray-700"
-                  type="range"
-                  id="overlap"
-                  min={1}
-                  max={200}
-                  onChange={(e) => setOverlap(parseInt(e.target.value))}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-       */}
+
     </div>
   );
 };

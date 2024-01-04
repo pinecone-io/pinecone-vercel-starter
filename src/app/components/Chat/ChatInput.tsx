@@ -4,6 +4,7 @@ interface ChatInputProps {
     input: string;
     handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleMessageSubmit: (event: FormEvent<HTMLFormElement>) => void;
+    showIndexMessage: boolean;
 }
 
 const styles = {
@@ -13,7 +14,7 @@ const styles = {
     message: { marginTop: 15, color: "#72788D", fontSize: 12 }
 };
 
-const ChatInput: React.FC<ChatInputProps> = ({ input, handleInputChange, handleMessageSubmit }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ input, handleInputChange, handleMessageSubmit, showIndexMessage }) => {
     return (
         <div style={styles.container} className="w-full">
             <form
@@ -33,9 +34,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ input, handleInputChange, handleM
                     </svg>
                 </div>
 
-                <div style={styles.message}>
+                {showIndexMessage && <div style={styles.message}>
                     Your index contains no vector embeddings yet. Please add some by indexing one of the demo URLs on the left.
-                </div>
+                </div>}
 
             </form>
         </div>
