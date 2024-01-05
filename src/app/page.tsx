@@ -16,30 +16,6 @@ const Page: React.FC = () => {
   const [checkIndex, setCheckIndex] = useState<boolean>(false);
   const [totalRecords, setTotalRecords] = useState<number>(0);
 
-
-  // const getContext = async (messages: Message[]) => {
-  //   const response = await fetch("/api/context", {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //       messages,
-  //     }),
-  //   });
-  //   try {
-  //     const context = await response.json() as ScoredPineconeRecord[]
-  //     console.log("context", context)
-  //     if (context && context.length > 0) {
-  //       setContext(context.map((c: any) => c.id));
-
-  //       return context;
-  //     } else {
-  //       return undefined;
-  //     }
-
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // };
-
   useEffect(() => {
     const checkIndex = async () => {
       const response = await fetch("/api/checkIndex", {

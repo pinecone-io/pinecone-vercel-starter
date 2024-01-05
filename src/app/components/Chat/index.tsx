@@ -7,7 +7,7 @@ import type { PineconeRecord, RecordMetadata, ScoredPineconeRecord } from "@pine
 interface ChatProps {
   setContext: (data: PineconeRecord[]) => void;
   showIndexMessage: boolean;
-  context: PineconeRecord[] | null;
+  context: { context: PineconeRecord[] }[] | null;
 }
 
 const Chat: React.FC<ChatProps> = ({ setContext, showIndexMessage, context }) => {

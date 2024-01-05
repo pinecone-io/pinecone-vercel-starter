@@ -7,7 +7,7 @@ import { PineconeRecord } from "@pinecone-database/pinecone";
 import Popover from '@mui/material/Popover';
 import { Typography } from "@mui/material";
 
-export default function Messages({ messages, withContext, context }: { messages: Message[], withContext: boolean, context?: [{ context: PineconeRecord[] }] }) {
+export default function Messages({ messages, withContext, context }: { messages: Message[], withContext: boolean, context?: { context: PineconeRecord[] }[] }) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   // console.log(messages)
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
