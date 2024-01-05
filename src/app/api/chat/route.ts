@@ -32,7 +32,7 @@ export async function POST(req: Request) {
 
 
     // Get the context from the last message
-    const context = withContext ? await getContext(lastMessage.content, '', 3000, 0.7, false) : ''
+    const context = withContext ? await getContext(lastMessage.content, '', 3000, 0.8, false) : ''
 
     console.log("withContext", context.length)
 

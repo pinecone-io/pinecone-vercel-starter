@@ -3,25 +3,28 @@ import { useRef, useState } from "react";
 import { UserIcon } from "@/utils/icons/user";
 import { PineconeIcon } from "@/utils/icons/pinecone";
 import { EllipseIcon } from "@/utils/icons/ellipse";
+import { BlueEllipseSvg } from "@/utils/svg/blueEllipse";
 import { PineconeRecord } from "@pinecone-database/pinecone";
 import Popover from '@mui/material/Popover';
 import { Typography } from "@mui/material";
+import { PineconeSvg } from "@/utils/svg/pinecone";
+import { PineconeLogoSvg } from "@/utils/svg/pineconeLogo";
 
 export default function Messages({ messages, withContext, context }: { messages: Message[], withContext: boolean, context?: { context: PineconeRecord[] }[] }) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  // console.log(messages)
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [anchorEls, setAnchorEls] = useState<{ [key: string]: HTMLButtonElement | null }>({});
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>, messageId: string) => {
+    setAnchorEls(prev => ({ ...prev, [messageId]: event.currentTarget }));
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  // Handle close function
+  const handleClose = (messageId: string) => {
+    setAnchorEls(prev => ({ ...prev, [messageId]: null }));
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  // const open = Boolean(anchorEl);
+  // const id = open ? 'simple-popover' : undefined;
 
   const assistantMessages = messages.filter((_, index) => index % 2 === 1);
   const assistantMessagesObject = assistantMessages.reduce((obj: { [key: string]: Message }, message) => {
@@ -32,8 +35,32 @@ export default function Messages({ messages, withContext, context }: { messages:
   console.log(assistantMessagesObject);
   console.log("context", context);
 
+  const styles = {
+    lightGrey: {
+      color: "#72788D"
+    },
+    placeholder: {
+      fontSize: 12,
+      marginTop: 10,
+    }
+  }
+
   return (
-    <div className="rounded-lg overflow-y-scroll flex-grow flex flex-col justify-end ">
+    <div className="rounded-lg overflow-y-scroll flex-grow flex flex-col justify-end h-full">
+      {messages.length == 0 && (
+        <div className="flex justify-center items-center h-full">
+          {withContext ? <div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <PineconeLogoSvg />
+            </div>
+            <div style={{ ...styles.lightGrey, ...styles.placeholder }}>
+              This is your chatbot powered by pinecone
+            </div>
+          </div> : <div style={{ ...styles.lightGrey, ...styles.placeholder }}>
+            Compare to a chatbot without context
+          </div>}
+        </div>
+      )}
       {messages?.map((msg, index) => {
         const isAssistant = msg.role === "assistant";
         const entry = isAssistant && withContext && context && context[Math.floor(index / 2)];
@@ -54,28 +81,34 @@ export default function Messages({ messages, withContext, context }: { messages:
                 <div>{msg.content}</div>
                 {entry && entry.context.length > 0 && (
                   <>
-                    <div onMouseOver={(event: React.MouseEvent<HTMLDivElement>) => handleClick(event as any)}>
-                      Found in {entry.context.length} results
-                    </div>
+                    <button onMouseEnter={(event: React.MouseEvent<HTMLButtonElement>) => handleClick(event, msg.id)} onMouseLeave={() => handleClose(msg.id)} className="flex mt-1">
+                      <BlueEllipseSvg /><span className="ml-1" style={{ color: "#72788D", fontSize: 12 }}>Found in {entry.context.length} results</span>
+                    </button>
 
                     <Popover
-                      id={id}
-                      open={open}
-                      anchorEl={anchorEl}
-                      onClose={handleClose}
+                      id={msg.id}
+                      open={Boolean(anchorEls[msg.id])}
+                      anchorEl={anchorEls[msg.id]}
+                      onClose={() => handleClose(msg.id)}
+                      disableRestoreFocus
                       anchorOrigin={{
                         vertical: 'bottom',
-                        horizontal: 'left',
+                        horizontal: 'center',
+                      }}
+                      transformOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
                       }}
                       sx={{
-                        maxWidth: "50%",
+                        width: "60%",
+                        pointerEvents: 'none',
                       }}
                     >
                       {
                         entry.context.map((c, index) => {
                           return (
                             <div key={index} className="p-2">
-                              <Typography sx={{ fontSize: 10, fontWeight: 400 }}>
+                              <Typography sx={{ fontSize: 12, fontWeight: 400 }}>
                                 {c.metadata?.chunk}
                               </Typography>
                             </div>
@@ -87,6 +120,11 @@ export default function Messages({ messages, withContext, context }: { messages:
 
 
                 )}
+                {
+                  !withContext && msg.role === "assistant" && (index == messages.length - 1) && (<div className="mt-1" style={{ color: "#72788D", fontSize: 12 }}>
+                    This answer may be speculative or inaccurate.
+                  </div>)
+                }
               </div>
             </div>
           </div>

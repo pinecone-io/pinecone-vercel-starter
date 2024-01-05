@@ -13,27 +13,19 @@ const Page: React.FC = () => {
   const [context, setContext] = useState<{ context: PineconeRecord[] }[] | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const [checkIndex, setCheckIndex] = useState<boolean>(false);
   const [totalRecords, setTotalRecords] = useState<number>(0);
 
-  useEffect(() => {
-    const checkIndex = async () => {
-      const response = await fetch("/api/checkIndex", {
-        method: "POST",
-      });
-      try {
-        const stats = await response.json();
-        setTotalRecords(stats.totalRecordCount);
-        setCheckIndex(true);
-      } catch (e) {
-        console.log(e)
-      }
-    };
-    checkIndex();
-  }, [checkIndex]);
 
   const refreshIndex = async () => {
-    setCheckIndex(false);
+    const response = await fetch("/api/checkIndex", {
+      method: "POST",
+    });
+    try {
+      const stats = await response.json();
+      setTotalRecords(stats.totalRecordCount);
+    } catch (e) {
+      console.log(e)
+    }
   }
 
 
@@ -47,7 +39,7 @@ const Page: React.FC = () => {
         <div style={{
           backgroundColor: "#FBFBFC"
         }} className="absolute transform translate-x-full transition-transform duration-500 ease-in-out right-0 w-2/3 h-full bg-white overflow-y-auto lg:static lg:translate-x-0 lg:w-2/5">
-          <Context className="" selected={context} refreshIndex={refreshIndex} />
+          <Context className="" context={context} refreshIndex={refreshIndex} />
         </div>
         <Chat setContext={setContext} showIndexMessage={totalRecords === 0} context={context} />
         <button

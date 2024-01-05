@@ -55,7 +55,7 @@ const Chat: React.FC<ChatProps> = forwardRef<ChatInterface, ChatProps>(({ withCo
 
 
     return (
-        <div className="flex-col w-50 overflow-auto">
+        <div className="flex-col w-50 overflow-auto h-full" style={{ borderLeft: "1px solid #738FAB1F" }}>
             {context ? <Messages messages={messages} withContext={withContext} context={context} /> : <Messages messages={messages} withContext={withContext} />}
         </div>
     );

@@ -13,19 +13,19 @@ export interface ICard {
 
 interface ICardProps {
   card: ICard;
-  context: PineconeRecord[] | null;
+  context: { context: PineconeRecord[] }[] | null;
   id: string;
 }
 
 export const Card: FC<ICardProps> = ({ card, context }) => (
   <div
     id={card.id}
-    className={`card w-full p-5 m-2`}
+    className={`card w-full mb-2`}
   >
     <ReactMarkdown>{card.pageContent}</ReactMarkdown>
     <div className="flex">
       {/* {selected && selected.includes(card.metadata.hash) && <BlueEllipseSvg />} */}
-      <b className="text-xs">
+      <b className="text-xs mt-2" style={{ color: "#72788D", fontWeight: 400 }}>
         ID: {card.metadata.hash}
       </b>
     </div>
