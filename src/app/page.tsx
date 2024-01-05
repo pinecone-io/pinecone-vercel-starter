@@ -10,7 +10,7 @@ import { Message } from "ai";
 import { PineconeRecord, ScoredPineconeRecord } from "@pinecone-database/pinecone";
 
 const Page: React.FC = () => {
-  const [context, setContext] = useState<PineconeRecord[] | null>(null);
+  const [context, setContext] = useState<{ context: PineconeRecord[] }[] | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
 
   const [checkIndex, setCheckIndex] = useState<boolean>(false);

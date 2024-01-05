@@ -5,7 +5,7 @@ import { Message } from "ai";
 import type { PineconeRecord, RecordMetadata, ScoredPineconeRecord } from "@pinecone-database/pinecone";
 
 interface ChatProps {
-  setContext: (data: PineconeRecord[]) => void;
+  setContext: (data: { context: PineconeRecord[] }[]) => void;
   showIndexMessage: boolean;
   context: { context: PineconeRecord[] }[] | null;
 }

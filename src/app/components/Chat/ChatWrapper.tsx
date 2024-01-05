@@ -13,7 +13,7 @@ export interface ChatInterface {
 
 interface ChatProps {
     withContext: boolean;
-    setContext: (data: PineconeRecord[]) => void;
+    setContext: (data: { context: PineconeRecord[] }[]) => void;
     context?: { context: PineconeRecord[] }[] | null;
     ref: Ref<ChatInterface>
 }
@@ -28,7 +28,7 @@ const Chat: React.FC<ChatProps> = forwardRef<ChatInterface, ChatProps>(({ withCo
 
     useEffect(() => {
         if (data) {
-            setContext(data as PineconeRecord[]) // Logs the additional data
+            setContext(data as { context: PineconeRecord[] }[]) // Logs the additional data
         }
     }, [data, setContext]);
 
