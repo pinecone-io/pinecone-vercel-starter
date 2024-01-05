@@ -2,14 +2,15 @@ import React, { FormEvent, ChangeEvent, useRef } from "react";
 import ChatWrapper, { ChatInterface } from "./ChatWrapper";
 import ChatInput from "./ChatInput";
 import { Message } from "ai";
-import type { RecordMetadata, ScoredPineconeRecord } from "@pinecone-database/pinecone";
+import type { PineconeRecord, RecordMetadata, ScoredPineconeRecord } from "@pinecone-database/pinecone";
 
 interface ChatProps {
-  getContext: (messages: Message[]) => Promise<ScoredPineconeRecord<RecordMetadata>[]>;
+  setContext: (data: PineconeRecord[]) => void;
   showIndexMessage: boolean;
+  context: PineconeRecord[] | null;
 }
 
-const Chat: React.FC<ChatProps> = ({ getContext, showIndexMessage }) => {
+const Chat: React.FC<ChatProps> = ({ setContext, showIndexMessage, context }) => {
 
   const chatWithContextRef = useRef<ChatInterface | null>(null);
   const chatWithoutContextRef = useRef<ChatInterface | null>(null);
@@ -32,10 +33,10 @@ const Chat: React.FC<ChatProps> = ({ getContext, showIndexMessage }) => {
 
       <div className="flex flex-grow">
         <div className="w-1/2">
-          <ChatWrapper ref={chatWithoutContextRef} withContext={true} getContext={getContext} />
+          <ChatWrapper ref={chatWithoutContextRef} withContext={true} setContext={setContext} context={context} />
         </div>
         <div className="w-1/2">
-          <ChatWrapper ref={chatWithContextRef} withContext={false} getContext={getContext} />
+          <ChatWrapper ref={chatWithContextRef} withContext={false} setContext={setContext} />
         </div>
       </div>
 

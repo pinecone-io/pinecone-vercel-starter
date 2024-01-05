@@ -56,5 +56,6 @@ export async function clearIndex(
       }))
     );
     setCards([]);
+    return true
   }
 }
