@@ -12,15 +12,6 @@ const openai = new OpenAIApi(config)
 // IMPORTANT! Set the runtime to edge
 export const runtime = 'edge'
 
-export class ExtendedStreamingTextResponse extends StreamingTextResponse {
-  additionalData: any;
-
-  constructor(stream: ReturnType<typeof OpenAIStream>, additionalData: any) {
-    super(stream);
-    this.additionalData = additionalData;
-  }
-}
-
 export async function POST(req: Request) {
   try {
 

@@ -1,19 +1,27 @@
-import React, { FormEvent, ChangeEvent, useRef } from "react";
+import React, { FormEvent, ChangeEvent, useRef, useEffect, useContext } from "react";
 import ChatWrapper, { ChatInterface } from "./ChatWrapper";
 import ChatInput from "./ChatInput";
 import { Message } from "ai";
 import type { PineconeRecord, RecordMetadata, ScoredPineconeRecord } from "@pinecone-database/pinecone";
+import useRefreshIndex from "@/hooks/useRefreshIndex";
+import AppContext from "@/appContext";
 
 interface ChatProps {
   setContext: (data: { context: PineconeRecord[] }[]) => void;
-  showIndexMessage: boolean;
   context: { context: PineconeRecord[] }[] | null;
 }
 
-const Chat: React.FC<ChatProps> = ({ setContext, showIndexMessage, context }) => {
+const Chat: React.FC<ChatProps> = ({ setContext, context }) => {
 
   const chatWithContextRef = useRef<ChatInterface | null>(null);
   const chatWithoutContextRef = useRef<ChatInterface | null>(null);
+
+  const { totalRecords } = useContext(AppContext);
+
+  useEffect(() => {
+    console.log("totalRecords", totalRecords)
+  }, [totalRecords])
+
 
   const [input, setInput] = React.useState<string>("")
   const onMessageSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -41,7 +49,7 @@ const Chat: React.FC<ChatProps> = ({ setContext, showIndexMessage, context }) =>
       </div>
 
       <div className="w-full">
-        <ChatInput input={input} handleInputChange={onInputChange} handleMessageSubmit={onMessageSubmit} showIndexMessage={showIndexMessage} />
+        <ChatInput input={input} handleInputChange={onInputChange} handleMessageSubmit={onMessageSubmit} showIndexMessage={totalRecords === 0} />
       </div>
     </div>
   );

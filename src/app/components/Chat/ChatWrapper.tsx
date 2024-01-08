@@ -32,8 +32,6 @@ const Chat: React.FC<ChatProps> = forwardRef<ChatInterface, ChatProps>(({ withCo
         }
     }, [data, setContext]);
 
-    const prevMessagesLengthRef = useRef(messages.length);
-
     const chatRef = useRef<ChatInterface>(null);
 
     useImperativeHandle(ref, () => ({

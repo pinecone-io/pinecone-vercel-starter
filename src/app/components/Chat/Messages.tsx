@@ -23,18 +23,6 @@ export default function Messages({ messages, withContext, context }: { messages:
     setAnchorEls(prev => ({ ...prev, [messageId]: null }));
   };
 
-  // const open = Boolean(anchorEl);
-  // const id = open ? 'simple-popover' : undefined;
-
-  const assistantMessages = messages.filter((_, index) => index % 2 === 1);
-  const assistantMessagesObject = assistantMessages.reduce((obj: { [key: string]: Message }, message) => {
-    obj[message.id] = message;
-    return obj;
-  }, {});
-
-  console.log(assistantMessagesObject);
-  console.log("context", context);
-
   const styles = {
     lightGrey: {
       color: "#72788D"
