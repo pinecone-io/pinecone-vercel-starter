@@ -1,6 +1,6 @@
-import { ScoredVector } from "@pinecone-database/pinecone";
+import type { PineconeRecord } from "@pinecone-database/pinecone";
+import { getEmbeddings } from './embeddings';
 import { getMatchesFromEmbeddings } from "./pinecone";
-import { getEmbeddings } from './embeddings'
 
 export type Metadata = {
   url: string,
@@ -9,7 +9,7 @@ export type Metadata = {
 }
 
 // The function `getContext` is used to retrieve the context of a given message
-export const getContext = async (message: string, namespace: string, maxTokens = 3000, minScore = 0.7, getOnlyText = true): Promise<ScoredVector[]> => {
+export const getContext = async (message: string, namespace: string, maxTokens = 3000, minScore = 0.7, getOnlyText = true): Promise<PineconeRecord[]> => {
 
   // Get the embeddings of the input message
   const embedding = await getEmbeddings(message);

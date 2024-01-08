@@ -1,10 +1,10 @@
-import { getEmbeddings } from "@/utils/embeddings";
+import { getEmbeddings } from "@/services/embeddings";
+import { truncateStringByBytes } from "@/utils/truncateString";
 import { Document, MarkdownTextSplitter, RecursiveCharacterTextSplitter } from "@pinecone-database/doc-splitter";
 import { Pinecone, PineconeRecord } from "@pinecone-database/pinecone";
-import { chunkedUpsert } from '../../utils/chunkedUpsert'
 import md5 from "md5";
+import { chunkedUpsert } from '@/services/chunkedUpsert';
 import { Crawler, Page } from "./crawler";
-import { truncateStringByBytes } from "@/utils/truncateString"
 
 interface SeedOptions {
   splittingMethod: string

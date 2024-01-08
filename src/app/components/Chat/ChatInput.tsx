@@ -1,4 +1,4 @@
-import { UpArrowSvg } from '@/utils/svg/upArrow';
+import { UpArrowSvg } from '@/assets/svg/upArrow';
 import React, { FormEvent } from 'react';
 
 interface ChatInputProps {
@@ -25,7 +25,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ input, handleInputChange, handleM
                 className="bg-white rounded-lg relative"
             >
                 <div style={styles.form}>
-
                     <input
                         type="text"
                         className="input-glow appearance-none w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline pl-3 pr-10 transition-shadow duration-200"

@@ -1,4 +1,4 @@
-import { BlueEllipseSvg } from "@/utils/svg/blueEllipse";
+import { BlueEllipseSvg } from "@/assets/svg/blueEllipse";
 import { PineconeRecord } from "@pinecone-database/pinecone";
 import React, { FC } from "react";
 import ReactMarkdown from "react-markdown";

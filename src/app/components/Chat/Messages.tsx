@@ -1,14 +1,13 @@
+import { EllipseIcon } from "@/assets/icons/ellipse";
+import { PineconeIcon } from "@/assets/icons/pinecone";
+import { UserIcon } from "@/assets/icons/user";
+import { BlueEllipseSvg } from "@/assets/svg/blueEllipse";
+import { PineconeLogoSvg } from "@/assets/svg/pineconeLogo";
+import { Typography } from "@mui/material";
+import Popover from '@mui/material/Popover';
+import type { PineconeRecord } from "@pinecone-database/pinecone";
 import { Message } from "ai";
 import { useRef, useState } from "react";
-import { UserIcon } from "@/utils/icons/user";
-import { PineconeIcon } from "@/utils/icons/pinecone";
-import { EllipseIcon } from "@/utils/icons/ellipse";
-import { BlueEllipseSvg } from "@/utils/svg/blueEllipse";
-import { PineconeRecord } from "@pinecone-database/pinecone";
-import Popover from '@mui/material/Popover';
-import { Typography } from "@mui/material";
-import { PineconeSvg } from "@/utils/svg/pinecone";
-import { PineconeLogoSvg } from "@/utils/svg/pineconeLogo";
 
 export default function Messages({ messages, withContext, context }: { messages: Message[], withContext: boolean, context?: { context: PineconeRecord[] }[] }) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);

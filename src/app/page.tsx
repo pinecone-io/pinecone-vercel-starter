@@ -1,13 +1,11 @@
-// page.tsx
-
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Sidebar } from "@/components/Sidebar";
 import Chat from "@/components/Chat";
-import AppContext from "./appContext";
-import useRefreshIndex from '@/hooks/useRefreshIndex'
+import { Sidebar } from "@/components/Sidebar";
+import useRefreshIndex from '@/hooks/useRefreshIndex';
 import type { PineconeRecord } from "@pinecone-database/pinecone";
+import React, { useEffect, useState } from "react";
+import AppContext from "./appContext";
 
 const Page: React.FC = () => {
   const [context, setContext] = useState<{ context: PineconeRecord[] }[] | null>(null);

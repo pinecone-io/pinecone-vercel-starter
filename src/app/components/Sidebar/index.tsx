@@ -68,19 +68,6 @@ export const Sidebar: React.FC = () => {
     setSplittingMethod(value)
   }
 
-
-  const chunkSizePopoverTriggers = {
-    onMouseEnter: () => setOpenChunkSizePopover(true),
-    onMouseLeave: () => setOpenChunkSizePopover(false),
-  };
-
-
-
-  const overLapPopoverTriggers = {
-    onMouseEnter: () => setOpenOverLapPopover(true),
-    onMouseLeave: () => setOpenOverLapPopover(false),
-  };
-
   const handleEmbedAndUpsertClick = async () => {
     setCrawling(true)
     await crawlDocument(

@@ -1,8 +1,8 @@
-import React, { FormEvent, ChangeEvent, forwardRef, useImperativeHandle, useRef, Ref, useEffect, useState } from "react";
-import Messages from "./Messages";
+import type { PineconeRecord } from "@pinecone-database/pinecone";
 import { useChat } from "ai/react";
-import type { PineconeRecord, RecordMetadata, ScoredPineconeRecord } from "@pinecone-database/pinecone";
+import React, { ChangeEvent, FormEvent, Ref, forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { v4 as uuidv4 } from 'uuid';
+import Messages from "./Messages";
 
 export interface ChatInterface {
     handleMessageSubmit: (e: FormEvent<HTMLFormElement>) => void;

@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 interface RefreshIndexContextType {
     totalRecords: number;
     refreshIndex: () => Promise<void>;

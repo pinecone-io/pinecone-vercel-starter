@@ -1,10 +1,8 @@
-import React, { FormEvent, ChangeEvent, useRef, useEffect, useContext } from "react";
-import ChatWrapper, { ChatInterface } from "./ChatWrapper";
-import ChatInput from "./ChatInput";
-import { Message } from "ai";
-import type { PineconeRecord, RecordMetadata, ScoredPineconeRecord } from "@pinecone-database/pinecone";
-import useRefreshIndex from "@/hooks/useRefreshIndex";
 import AppContext from "@/appContext";
+import type { PineconeRecord } from "@pinecone-database/pinecone";
+import React, { ChangeEvent, FormEvent, useContext, useRef } from "react";
+import ChatInput from "./ChatInput";
+import ChatWrapper, { ChatInterface } from "./ChatWrapper";
 
 interface ChatProps {
   setContext: (data: { context: PineconeRecord[] }[]) => void;
@@ -17,11 +15,6 @@ const Chat: React.FC<ChatProps> = ({ setContext, context }) => {
   const chatWithoutContextRef = useRef<ChatInterface | null>(null);
 
   const { totalRecords } = useContext(AppContext);
-
-  useEffect(() => {
-    console.log("totalRecords", totalRecords)
-  }, [totalRecords])
-
 
   const [input, setInput] = React.useState<string>("")
   const onMessageSubmit = (e: FormEvent<HTMLFormElement>) => {

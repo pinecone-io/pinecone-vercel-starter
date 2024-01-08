@@ -1,6 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai-edge'
 import { Message, OpenAIStream, StreamingTextResponse, experimental_StreamData } from 'ai'
-import { Metadata, getContext } from '@/utils/context'
+import { Metadata, getContext } from '@/services/context'
 import { PineconeRecord, ScoredVector } from '@pinecone-database/pinecone'
 
 // Create an OpenAI API client (that's edge friendly!)
