@@ -97,10 +97,11 @@ export const Sidebar: React.FC = () => {
     }, 2000)
   }
 
-  const buttons = entries.map((entry, key) => (
+  const menuItems = entries.map((entry, key) => (
     <MenuItem
+
       key={key} value={entry.url}
-    ><div className="flex-col" >
+    ><div className="flex-col" data-testid={entry.url}>
         <div>{entry.title}</div>
         <div style={{ ...styles.entryUrl, whiteSpace: 'nowrap' as 'nowrap' }}>{entry.url}</div>
       </div>
@@ -122,7 +123,7 @@ export const Sidebar: React.FC = () => {
       <div className="flex flex-column w-full" style={{ ...styles.textHeaderWrapper, flexDirection: "column", }}>
         <div className="mb-3 w-full">
           <h4 style={styles.h4}>Select demo url to index</h4>
-          <Select className="w-full" value={url} onChange={handleUrlChange} MenuProps={{
+          <Select className="w-full" value={url} data-testid="url-selector" onChange={handleUrlChange} MenuProps={{
             keepMounted: true,
             PaperProps: {
               style: {
@@ -132,7 +133,7 @@ export const Sidebar: React.FC = () => {
               },
             },
           }}>
-            {buttons}
+            {menuItems}
           </Select>
         </div>
         <div className="mb-3 w-full">
@@ -176,7 +177,7 @@ export const Sidebar: React.FC = () => {
       </div>
       <div className="flex flex-wrap w-full mt-5 pb-2 border-b border-[#738FAB1F]">
         <div className="text-xs uppercase">Index records</div>
-        <div className="text-[#1B17F5] ml-auto cursor-pointer text-xs" onClick={handleClearIndexClick}>Clear</div>
+        <div className="text-[#1B17F5] ml-auto cursor-pointer text-xs" onClick={handleClearIndexClick} data-testid="clear-button">Clear</div>
       </div>
       {(
         <div className={`text-xs mt-1 
