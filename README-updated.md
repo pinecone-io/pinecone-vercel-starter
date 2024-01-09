@@ -1,3 +1,5 @@
+# Building a Context-Aware Chatbot with Pinecone and Vercel
+
 In this example, we'll build a full-stack application that uses Retrieval Augmented Generation (RAG) powered by [Pinecone](https://pinecone.io) to deliver accurate and contextually relevant responses in a chatbot.
 
 RAG is a powerful tool that combines the benefits of retrieval-based models and generative models. Unlike traditional chatbots that can struggle with maintaining up-to-date information or accessing domain-specific knowledge, a RAG-based chatbot uses a knowledge base created from crawled URLs to provide contextually relevant responses.
@@ -8,209 +10,207 @@ By the end of this tutorial, you'll have a context-aware chatbot that provides a
 
 ## Step 1: Setting Up Your Next.js Application
 
-Next.js is a powerful JavaScript framework that enables us to build server-side rendered and static web applications using React. It's a great choice for our project due to its ease of setup, excellent performance, and built-in features such as routing and API routes.
-
-To create a new Next.js app, run the following command:
-
-### npx
+First, create a new Next.js app and install the necessary packages:
 
 ```bash
 npx create-next-app chatbot
+cd chatbot
+npm install ai react @pinecone-database/pinecone
 ```
-
-Next, we'll add the `ai` package:
-
-```bash
-npm install ai
-```
-
-This command is used to install the `ai` package which is necessary for the chatbot functionality.
-
-
-You can use the [full list](https://github.com/pinecone-io/pinecone-vercel-example/blob/main/package.json) of dependencies if you'd like to build along with the tutorial.
 
 ## Step 2: Create the Chatbot
+In this step, we are going to build a chat interface that will render two components. One of these components will be a chatbot with context support provided by Pinecone. The other component will be a chatbot without context. Both of these components will present messages received by the `useChat` hook from the Vercel AI SDK.
 
-In this step, we're going to use the Vercel SDK to establish the backend and frontend of our chatbot within the Next.js application. By the end of this step, our basic chatbot will be up and running, ready for us to add context-aware capabilities in the following stages. Let's get started.
 
-### Chatbot frontend component
+### Chatbot Frontend Component
 
-Now, let's focus on the frontend component of our chatbot. We're going to build the user-facing elements of our bot, creating the interface through which users will interact with our application. This will involve crafting the design and functionality of the chat interface within our Next.js application.
-
-First, we'll create the `Chat` component, that will render the chat interface.
+Create a Chat component that will render the chat interface. This component will have two ChatWrapper components, one for the chatbot with context and one without context.
+When a message is sent, each of the `ChatWrapper` components will be notified and take on the responsibility of sending the message to the backend, as well as presenting with the proper messages.
 
 ```tsx
-import React, { FormEvent, ChangeEvent } from "react";
-import Messages from "./Messages";
-import { Message } from "ai/react";
+// Importing necessary modules and types
+import AppContext from "@/appContext";
+import type { PineconeRecord } from "@pinecone-database/pinecone";
+import React, { ChangeEvent, FormEvent, useContext, useRef } from "react";
+import ChatInput from "./ChatInput";
+import ChatWrapper, { ChatInterface } from "./ChatWrapper";
 
-interface Chat {
-  input: string;
-  handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  handleMessageSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
-  messages: Message[];
+// Defining the properties for the Chat component
+interface ChatProps {
+  setContext: (data: { context: PineconeRecord[] }[]) => void;
+  context: { context: PineconeRecord[] }[] | null;
 }
 
-const Chat: React.FC<Chat> = ({
-  input,
-  handleInputChange,
-  handleMessageSubmit,
-  messages,
-}) => {
+// The Chat component
+const Chat: React.FC<ChatProps> = ({ setContext, context }) => {
+  // Creating references for the chat components with and without context
+  const chatWithContextRef = useRef<ChatInterface | null>(null);
+  const chatWithoutContextRef = useRef<ChatInterface | null>(null);
+
+  // Accessing the total number of records from the application context
+  const { totalRecords } = useContext(AppContext);
+
+  // State for the chat input
+  const [input, setInput] = React.useState<string>("")
+
+  // Function to handle message submission
+  const onMessageSubmit = (e: FormEvent<HTMLFormElement>) => {
+    // Clear the input
+    setInput("")
+    // Submit the message to both chat components
+    chatWithContextRef.current?.handleMessageSubmit(e)
+    chatWithoutContextRef.current?.handleMessageSubmit(e)
+  }
+
+  // Function to handle input change
+  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    // Update the input state
+    setInput(event.target.value)
+    // Update the input in both chat components
+    chatWithContextRef.current?.handleInputUpdated(event)
+    chatWithoutContextRef.current?.handleInputUpdated(event)
+  }
+
+  // Rendering the Chat component
   return (
-    <div id="chat" className="...">
-      <Messages messages={messages} />
-      <>
-        <form onSubmit={handleMessageSubmit} className="...">
-          <input
-            type="text"
-            className="..."
-            value={input}
-            onChange={handleInputChange}
-          />
-
-          <span className="...">Press ⮐ to send</span>
-        </form>
-      </>
-    </div>
-  );
-};
-
-export default Chat;
-```
-
-This component will display the list of messages and the input form for the user to send messages. The `Messages` component to render the chat messages:
-
-```tsx
-import { Message } from "ai";
-import { useRef } from "react";
-
-export default function Messages({ messages }: { messages: Message[] }) {
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  return (
-    <div className="...">
-      {messages.map((msg, index) => (
-        <div
-          key={index}
-          className={`${
-            msg.role === "assistant" ? "text-green-300" : "text-blue-300"
-          } ... `}
-        >
-          <div className="...">{msg.role === "assistant" ? "🤖" : "🧑‍💻"}</div>
-          <div className="...">{msg.content}</div>
+    // The chat interface is divided into two sections, one for the chat with context and one without context
+    <div id="chat" className="flex flex-col w-full h-full">
+      <div className="flex flex-grow">
+        <div className="w-1/2">
+          <ChatWrapper ref={chatWithoutContextRef} withContext={true} setContext={setContext} context={context} />
         </div>
-      ))}
-      <div ref={messagesEndRef} />
-    </div>
-  );
-}
-```
-
-Our main `Page` component will manage the state for the messages displayed in the `Chat` component:
-
-```tsx
-"use client";
-import Header from "@/components/Header";
-import Chat from "@/components/Chat";
-import { useChat } from "ai/react";
-
-const Page: React.FC = () => {
-  const [context, setContext] = useState<string[] | null>(null);
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
-
-  return (
-    <div className="...">
-      <Header className="..." />
-      <div className="...">
-        <Chat
-          input={input}
-          handleInputChange={handleInputChange}
-          handleMessageSubmit={handleSubmit}
-          messages={messages}
-        />
+        <div className="w-1/2">
+          <ChatWrapper ref={chatWithContextRef} withContext={false} setContext={setContext} />
+        </div>
+      </div>
+      // The chat input is rendered at the bottom of the chat interface
+      <div className="w-full">
+        <ChatInput input={input} handleInputChange={onInputChange} handleMessageSubmit={onMessageSubmit} showIndexMessage={totalRecords === 0} />
       </div>
     </div>
   );
 };
 
-export default Page;
+// Exporting the Chat component
+export default Chat;
 ```
 
-The useful `useChat` hook will manage the state for the messages displayed in the `Chat` component. It will:
+### ChatWrapper Component
 
-1. Send the user's message to the backend
-2. Update the state with the response from the backend
-3. Handle any internal state changes (e.g. when the user types a message)
 
-### Chatbot API endpoint
+The Chat component is responsible for handling the chatbot's input and message submission. It uses the useChat hook from the ai package to manage the chatbot's state.
+The component is divided into two parts: the Messages component that displays the chat messages, and a form for submitting new messages. The component also generates a unique ID for each message.
 
-Next, we'll set up the Chatbot API endpoint. This is the server-side component that will handle requests and responses for our chatbot. We'll create a new file called `api/chat/route.ts` and add the following dependencies:
+```tsx
 
-```ts
-import { Configuration, OpenAIApi } from "openai-edge";
-import { Message, OpenAIStream, StreamingTextResponse } from "ai";
-```
+import type { PineconeRecord } from "@pinecone-database/pinecone";
+import { useChat } from "ai/react";
+import React, { ChangeEvent, FormEvent, Ref, forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { v4 as uuidv4 } from 'uuid';
+import Messages from "./Messages";
 
-The first dependency is the `openai-edge` package which makes it easier to interact with OpenAI's APIs in an edge environment. The second dependency is the `ai` package which we'll use to define the `Message` and `OpenAIStream` types, which we'll use to stream back the response from OpenAI back to the client.
-
-Next initialize the OpenAI client:
-
-```ts
-// Create an OpenAI API client (that's edge friendly!)
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(config);
-```
-
-To define this endpoint as an edge function, we'll define and export the `runtime` variable
-
-```ts
-export const runtime = "edge";
-```
-
-Next, we'll define the endpoint handler:
-
-```ts
-export async function POST(req: Request) {
-  try {
-    const { messages } = await req.json();
-
-    const prompt = [
-      {
-        role: "system",
-        content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
-      The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
-      AI is a well-behaved and well-mannered individual.
-      AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
-      AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
-      AI assistant is a big fan of Pinecone and Vercel.
-      `,
-      },
-    ];
-
-    // Ask OpenAI for a streaming chat completion given the prompt
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      stream: true,
-      messages: [
-        ...prompt,
-        ...messages.filter((message: Message) => message.role === "user"),
-      ],
-    });
-    // Convert the response into a friendly text-stream
-    const stream = OpenAIStream(response);
-    // Respond with the stream
-    return new StreamingTextResponse(stream);
-  } catch (e) {
-    throw e;
-  }
+export interface ChatInterface {
+    handleMessageSubmit: (e: FormEvent<HTMLFormElement>) => void;
+    handleInputUpdated: (event: ChangeEvent<HTMLInputElement>) => void;
+    ref: Ref<ChatInterface>;
+    withContext: boolean;
 }
+
+interface ChatProps {
+    withContext: boolean;
+    setContext: (data: { context: PineconeRecord[] }[]) => void;
+    context?: { context: PineconeRecord[] }[] | null;
+    ref: Ref<ChatInterface>
+}
+
+const Chat: React.FC<ChatProps> = forwardRef<ChatInterface, ChatProps>(({ withContext, setContext, context }, ref) => {
+    const { messages, handleInputChange, handleSubmit, isLoading, data } = useChat({
+        sendExtraMessageFields: true,
+        body: {
+            withContext,
+        },
+    });
+
+    useEffect(() => {
+        if (data) {
+            setContext(data as { context: PineconeRecord[] }[]) // Logs the additional data
+        }
+    }, [data, setContext]);
+
+    const chatRef = useRef<ChatInterface>(null);
+
+    useImperativeHandle(ref, () => ({
+        handleMessageSubmit: (event: FormEvent<HTMLFormElement>) => {
+            const id = uuidv4(); // Generate a unique ID
+            handleSubmit(event, {
+                data: {
+                    messageId: id, // Include the ID in the message object
+                    
+                },
+            })
+        },
+        handleInputUpdated: (event: ChangeEvent<HTMLInputElement>) => {
+            handleInputChange(event);
+        },
+    }));
+
+    return (
+        <div className="flex flex-col h-full">
+            <Messages messages={messages} withContext={withContext} context={context} />
+            <form onSubmit={(e) => chatRef.current?.handleMessageSubmit(e)} className="...">
+                <input
+                    type="text"
+                    className="..."
+                    onChange={(e) => chatRef.current?.handleInputUpdated(e)}
+                />
+                <button type="submit" className="...">Send</button>
+            </form>
+        </div>
+    );
+});
+
+Chat.displayName = 'Chat';
+
+export default Chat;
+```            
+
+### ChatInput Component
+
+The ChatInput component is responsible for rendering the chat input field and the send button. It uses the `handleInputChange` and `handleMessageSubmit` functions from the Chat component to handle input changes and message submission.
+
+```tsx
+import React, { ChangeEvent, FormEvent } from "react";
+
+interface ChatInputProps {
+    input: string;
+    handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    handleMessageSubmit: (e: FormEvent<HTMLFormElement>) => void;
+    showIndexMessage: boolean;
+}
+
+const ChatInput: React.FC<ChatInputProps> = ({ input, handleInputChange, handleMessageSubmit, showIndexMessage }) => {
+    return (
+        <form onSubmit={handleMessageSubmit} className="...">
+        <input
+                type="text"
+                className="..."
+                value={input}
+                onChange={handleInputChange}
+            />
+            <button type="submit" className="...">Send</button>
+            {showIndexMessage && (
+                <div className="...">
+                    <span className="...">Press ⮐ to send</span>
+                </div>
+            )}
+        </form>
+    );
+};
+
+export default ChatInput;
 ```
 
-Here we deconstruct the messages from the post, and create our initial prompt. We use the prompt and the messages as the input to the `createChatCompletion` method. We then convert the response into a stream and return it to the client. Note that in this example, we only send the user's messages to OpenAI (as opposed to including the bot's messages as well).
 
-<!-- Add snapshot of simple chat -->
 
 ## Step 3. Adding Context
 
@@ -505,74 +505,5 @@ const prompt = [
 
 In this prompt, we added a `START CONTEXT BLOCK` and `END OF CONTEXT BLOCK` to indicate where the context should be inserted. We also added a line to indicate that the AI assistant will take into account any context block that is provided in a conversation.
 
-### Add the context panel
-
-Next, we need to add the context panel to the chat UI. We'll add a new component called `Context` ([full code](https://github.com/pinecone-io/pinecone-vercel-example/tree/main/src/app/components/Context)).
-
-### Add the context endpoint
-
-We want to allow interface to indicate which portions of the retrieved content have been used to generate the response. To do this, we'll add a another endpoint that will call the same `getContext`.
-
-```ts
-export async function POST(req: Request) {
-  try {
-    const { messages } = await req.json();
-    const lastMessage =
-      messages.length > 1 ? messages[messages.length - 1] : messages[0];
-    const context = (await getContext(
-      lastMessage.content,
-      "",
-      10000,
-      0.7,
-      false
-    )) as ScoredPineconeRecord[];
-    return NextResponse.json({ context });
-  } catch (e) {
-    console.log(e);
-    return NextResponse.error();
-  }
-}
-```
-
-Whenever the user crawls a URL, the context panel will display all the segments of the retrieved webpage. Whenever the backend completes sending a message back, the front end will trigger an effect that will retrieve this context:
-
-```tsx
-useEffect(() => {
-  const getContext = async () => {
-    const response = await fetch("/api/context", {
-      method: "POST",
-      body: JSON.stringify({
-        messages,
-      }),
-    });
-    const { context } = await response.json();
-    setContext(context.map((c: any) => c.id));
-  };
-  if (gotMessages && messages.length >= prevMessagesLengthRef.current) {
-    getContext();
-  }
-
-  prevMessagesLengthRef.current = messages.length;
-}, [messages, gotMessages]);
-```
-
-## Running tests 
-
-The pinecone-vercel-starter uses [Playwright](https://playwright.dev) for end to end testing. 
-
-To run all the tests: 
-
-```
-npm run test:e2e
-```
-
-By default, when running locally, if errors are encountered, Playwright will open an HTML report showing which 
-tests failed and for which browser drivers.
-
-## Displaying test reports locally 
-
-To display the latest test report locally, run: 
-```
-npm run test:show
-```
+### Attaching the context data to the messages
 
