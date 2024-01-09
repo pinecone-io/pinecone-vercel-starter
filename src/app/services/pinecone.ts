@@ -20,9 +20,9 @@ const getMatchesFromEmbeddings = async (embeddings: number[], topK: number, name
   // Retrieve the list of indexes to check if expected index exists
   const indexes = await pinecone.listIndexes()
   if (indexes.filter(i => i.name === indexName).length !== 1) {
-    throw new Error(`Index ${indexName} does not exist`)
-  }
+    await pinecone.createIndex({ name: indexName, dimension: 1536, waitUntilReady: true, metric: 'cosine' });
 
+  }
   // Get the Pinecone index
   const index = pinecone!.Index<Metadata>(indexName);
 
@@ -44,4 +44,5 @@ const getMatchesFromEmbeddings = async (embeddings: number[], topK: number, name
   }
 }
 
-export { getMatchesFromEmbeddings }
+export { getMatchesFromEmbeddings };
+

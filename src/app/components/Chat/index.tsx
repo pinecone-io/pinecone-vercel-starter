@@ -1,42 +1,49 @@
-// Chat.tsx
+import AppContext from "@/appContext";
+import type { PineconeRecord } from "@pinecone-database/pinecone";
+import React, { ChangeEvent, FormEvent, useContext, useRef } from "react";
+import ChatInput from "./ChatInput";
+import ChatWrapper, { ChatInterface } from "./ChatWrapper";
 
-import React, { FormEvent, ChangeEvent } from "react";
-import Messages from "./Messages";
-import { Message } from "ai/react";
-
-interface Chat {
-  input: string;
-  handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  handleMessageSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
-  messages: Message[];
+interface ChatProps {
+  setContext: (data: { context: PineconeRecord[] }[]) => void;
+  context: { context: PineconeRecord[] }[] | null;
 }
 
-const Chat: React.FC<Chat> = ({
-  input,
-  handleInputChange,
-  handleMessageSubmit,
-  messages,
-}) => {
-  return (
-    <div id="chat" className="flex flex-col w-full lg:w-3/5 mr-4 mx-5 lg:mx-0">
-      <Messages messages={messages} />
-      <>
-        <form
-          onSubmit={handleMessageSubmit}
-          className="mt-5 mb-5 relative bg-gray-700 rounded-lg"
-        >
-          <input
-            type="text"
-            className="input-glow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline pl-3 pr-10 bg-gray-600 border-gray-600 transition-shadow duration-200"
-            value={input}
-            onChange={handleInputChange}
-          />
+const Chat: React.FC<ChatProps> = ({ setContext, context }) => {
 
-          <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
-            Press ⮐ to send
-          </span>
-        </form>
-      </>
+  const chatWithContextRef = useRef<ChatInterface | null>(null);
+  const chatWithoutContextRef = useRef<ChatInterface | null>(null);
+
+  const { totalRecords } = useContext(AppContext);
+
+  const [input, setInput] = React.useState<string>("")
+  const onMessageSubmit = (e: FormEvent<HTMLFormElement>) => {
+    setInput("")
+    chatWithContextRef.current?.handleMessageSubmit(e)
+    chatWithoutContextRef.current?.handleMessageSubmit(e)
+  }
+
+  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setInput(event.target.value)
+    chatWithContextRef.current?.handleInputUpdated(event)
+    chatWithoutContextRef.current?.handleInputUpdated(event)
+  }
+
+  return (
+    <div id="chat" className="flex flex-col w-full h-full">
+
+      <div className="flex flex-grow">
+        <div className="w-1/2">
+          <ChatWrapper ref={chatWithoutContextRef} withContext={true} setContext={setContext} context={context} />
+        </div>
+        <div className="w-1/2">
+          <ChatWrapper ref={chatWithContextRef} withContext={false} setContext={setContext} />
+        </div>
+      </div>
+
+      <div className="w-full">
+        <ChatInput input={input} handleInputChange={onInputChange} handleMessageSubmit={onMessageSubmit} showIndexMessage={totalRecords === 0} />
+      </div>
     </div>
   );
 };

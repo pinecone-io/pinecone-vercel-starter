@@ -1,5 +1,7 @@
+const withMT = require("@material-tailwind/react/utils/withMT");
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+module.exports = withMT({
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -11,6 +13,12 @@ module.exports = {
       md: "768px",
       lg: "1024px",
       xl: "1280px",
+    },
+    colors: {
+      "button-primary": '#1B17F5',
+      "bg-grey": '#FBFBFC',
+      "text-primary": "#121142",
+      "shaded-border": "#738FAB80"
     },
     extend: {
       backgroundImage: {
@@ -27,4 +35,4 @@ module.exports = {
   future: {
     removeDeprecatedGapUtilities: true,
   },
-};
+});

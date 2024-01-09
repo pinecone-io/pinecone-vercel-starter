@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { urls } from '../src/app/components/Sidebar/urls';
 
 test('has correct title', async ({ page }) => {
   await page.goto('http://localhost:3000');
@@ -6,75 +7,36 @@ test('has correct title', async ({ page }) => {
   await expect(page).toHaveTitle('Pinecone - Vercel AI SDK Example')
 })
 
-test('renders info modal button', async ({ page }) => {
-  await page.goto('http://localhost:3000')
-
-  const infoButtonCount = await page.locator('.info-button').count()
-  await expect(infoButtonCount).toBe(1)
-})
-
-test('renders GitHub repository button', async ({ page }) => {
-  await page.goto('http://localhost:3000')
-
-  const infoButtonCount = await page.locator('.github-button').count()
-  await expect(infoButtonCount).toBe(1)
-})
-
-test('renders Vercel deploy button', async ({ page }) => {
-  await page.goto('http://localhost:3000')
-
-  const vercelDeployButtonCount = await page.getByRole('link', { name: 'Deploy' }).count()
-
-  await expect(vercelDeployButtonCount).toBe(1)
-})
-
 test('renders clear index button', async ({ page }) => {
   await page.goto('http://localhost:3000')
 
-  const clearIndexButtonCount = await page.getByRole('button', { name: 'Clear Index' }).count()
-
+  const clearIndexButton = await page.$('[data-testid="clear-button"]');
+  const clearIndexButtonCount = clearIndexButton ? 1 : 0;
   await expect(clearIndexButtonCount).toBe(1)
 })
 
-test('renders indonesia deforestation button', async ({ page }) => {
-  await page.goto('http://localhost:3000')
+test('Check Select menu', async ({ page }) => {
+  // Go to your page
+  await page.goto('http://localhost:3000');
 
-  const indonesiaDeforestationButtonCount = await page.getByRole('button', { name: 'Indonesia Deforestation' }).count()
+  // Check if Select is visible
+  const select = await page.locator('data-testid=url-selector');
+  await expect(select).toBeVisible();
 
-  await expect(indonesiaDeforestationButtonCount).toBe(1)
-})
+  // Click on the Select box and wait for it
+  await select.click();
+  await page.waitForTimeout(1000);
 
-test('renders solar power in India button', async ({ page }) => {
-  await page.goto('http://localhost:3000')
-
-  const solarPowerButtonCount = await page.getByRole('button', { name: 'Solar Power in India' }).count()
-
-  await expect(solarPowerButtonCount).toBe(1)
-})
-
-test('renders matisee thybulle button', async ({ page }) => {
-  await page.goto('http://localhost:3000')
-
-  const matiseeThybulleButtonCount = await page.getByRole('button', { name: 'Matisee Thybulle' }).count()
-
-  await expect(matiseeThybulleButtonCount).toBe(1)
-})
-
-/*test('GitHub button goes to project repository', async ({ page, browserName }) => {
-  test.setTimeout(60000)
-
-  test.skip(browserName === 'chromium', 'Chrome doesn\'t work :( ')
-
-  await page.goto('http://localhost:3000/');
-  const githubButton = await page.locator('.github-button');
-  await githubButton.click();
-
-  try {
-    await page.waitForNavigation('https://github.com/pinecone-io/pinecone-vercel-starter');
-  } catch (e) {
-    console.log('Error waiting on navigation...')
+  // Check if MenuItems are rendered correctly
+  for (let i = 0; i < urls.length; i++) {
+    const menuItem = await page.locator(`div[data-testid="${urls[i].url}"]`);
+    const title = await menuItem.locator('div').first().innerText();
+    expect(title).toBe(urls[i].title); // The title should be the title of the entry
+    const url = await menuItem.locator('div').last().innerText();
+    expect(url).toBe(urls[i].url); // The url should be the url of the entry
   }
-});*/
+});
+
 
 // TODO - add tests for other key buttons on the homepage
 

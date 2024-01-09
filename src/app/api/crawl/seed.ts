@@ -1,10 +1,10 @@
-import { getEmbeddings } from "@/utils/embeddings";
+import { getEmbeddings } from "@/services/embeddings";
+import { truncateStringByBytes } from "@/utils/truncateString";
 import { Document, MarkdownTextSplitter, RecursiveCharacterTextSplitter } from "@pinecone-database/doc-splitter";
 import { Pinecone, PineconeRecord } from "@pinecone-database/pinecone";
-import { chunkedUpsert } from '../../utils/chunkedUpsert'
 import md5 from "md5";
+import { chunkedUpsert } from '@/services/chunkedUpsert';
 import { Crawler, Page } from "./crawler";
-import { truncateStringByBytes } from "@/utils/truncateString"
 
 interface SeedOptions {
   splittingMethod: string
@@ -52,7 +52,7 @@ async function seed(url: string, limit: number, indexName: string, options: Seed
     const vectors = await Promise.all(documents.flat().map(embedDocument));
 
     // Upsert vectors into the Pinecone index
-    await chunkedUpsert(index!, vectors, '', 10);
+    await chunkedUpsert(index, vectors, '', 10);
 
     // Return the first document
     return documents[0];
