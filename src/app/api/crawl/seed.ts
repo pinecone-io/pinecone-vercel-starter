@@ -1,6 +1,6 @@
 import { getEmbeddings } from "@/utils/embeddings";
 import { Document, MarkdownTextSplitter, RecursiveCharacterTextSplitter } from "@pinecone-database/doc-splitter";
-import { Pinecone, PineconeRecord } from "@pinecone-database/pinecone";
+import { Pinecone, PineconeRecord, ServerlessSpecCloudEnum } from "@pinecone-database/pinecone";
 import { chunkedUpsert } from '../../utils/chunkedUpsert'
 import md5 from "md5";
 import { Crawler, Page } from "./crawler";
@@ -14,7 +14,7 @@ interface SeedOptions {
 
 type DocumentSplitter = RecursiveCharacterTextSplitter | MarkdownTextSplitter
 
-async function seed(url: string, limit: number, indexName: string, options: SeedOptions) {
+async function seed(url: string, limit: number, indexName: string, cloudName: ServerlessSpecCloudEnum, regionName: string, options: SeedOptions) {
   try {
     // Initialize the Pinecone client
     const pinecone = new Pinecone();
@@ -36,13 +36,19 @@ async function seed(url: string, limit: number, indexName: string, options: Seed
     const documents = await Promise.all(pages.map(page => prepareDocument(page, splitter)));
 
     // Create Pinecone index if it does not exist
-    const indexList = await pinecone.listIndexes();
-    const indexExists = indexList.some(index => index.name === indexName)
+    const indexList: string[] = (await pinecone.listIndexes())?.indexes?.map(index => index.name) || [];
+    const indexExists = indexList.includes(indexName);
     if (!indexExists) {
       await pinecone.createIndex({
         name: indexName,
         dimension: 1536,
         waitUntilReady: true,
+        spec: { 
+          serverless: { 
+              cloud: cloudName, 
+              region: regionName
+          }
+        } 
       });
     }
 
