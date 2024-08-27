@@ -11,12 +11,13 @@
     "test:show": "playwright show-report"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.54",
     "@pinecone-database/doc-splitter": "^0.0.1",
     "@pinecone-database/pinecone": "^2.1.0",
     "@types/node": "20.4.0",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
-    "ai": "^2.1.16",
+    "ai": "^3.3.19",
     "cheerio": "^1.0.0-rc.12",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.9",

@@ -2,7 +2,7 @@ In this example, we'll build a full-stack application that uses Retrieval Augmen
 
 RAG is a powerful tool that combines the benefits of retrieval-based models and generative models. Unlike traditional chatbots that can struggle with maintaining up-to-date information or accessing domain-specific knowledge, a RAG-based chatbot uses a knowledge base created from crawled URLs to provide contextually relevant responses.
 
-Incorporating Vercel's AI SDK into our application will allow us easily set up the chatbot workflow and utilize streaming more efficiently, particularly in edge environments, enhancing the responsiveness and performance of our chatbot.
+Incorporating Vercel's AI SDK into our application will allow us easily set up the chatbot workflow and utilize streaming more efficiently, enhancing the responsiveness and performance of our chatbot.
 
 By the end of this tutorial, you'll have a context-aware chatbot that provides accurate responses without hallucination, ensuring a more effective and engaging user experience. Let's get started on building this powerful tool ([Full code listing](https://github.com/pinecone-io/pinecone-vercel-example/blob/main/package.json)).
 
@@ -18,10 +18,10 @@ To create a new Next.js app, run the following command:
 npx create-next-app chatbot
 ```
 
-Next, we'll add the `ai` package:
+Next, we'll add the `ai` package and the OpenAI AI SDK Provider:
 
 ```bash
-npm install ai
+npm install ai @ai-sdk/openai
 ```
 
 You can use the [full list](https://github.com/pinecone-io/pinecone-vercel-example/blob/main/package.json) of dependencies if you'd like to build along with the tutorial.
@@ -144,26 +144,9 @@ The useful `useChat` hook will manage the state for the messages displayed in th
 Next, we'll set up the Chatbot API endpoint. This is the server-side component that will handle requests and responses for our chatbot. We'll create a new file called `api/chat/route.ts` and add the following dependencies:
 
 ```ts
-import { Configuration, OpenAIApi } from "openai-edge";
-import { Message, OpenAIStream, StreamingTextResponse } from "ai";
-```
-
-The first dependency is the `openai-edge` package which makes it easier to interact with OpenAI's APIs in an edge environment. The second dependency is the `ai` package which we'll use to define the `Message` and `OpenAIStream` types, which we'll use to stream back the response from OpenAI back to the client.
-
-Next initialize the OpenAI client:
-
-```ts
-// Create an OpenAI API client (that's edge friendly!)
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(config);
-```
-
-To define this endpoint as an edge function, we'll define and export the `runtime` variable
-
-```ts
-export const runtime = "edge";
+import { Message, streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { getContext } from "@/utils/context";
 ```
 
 Next, we'll define the endpoint handler:
@@ -187,25 +170,22 @@ export async function POST(req: Request) {
     ];
 
     // Ask OpenAI for a streaming chat completion given the prompt
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      stream: true,
+    const response = await streamText({
+      model: openai("gpt-4o-mini"),
       messages: [
         ...prompt,
         ...messages.filter((message: Message) => message.role === "user"),
       ],
     });
     // Convert the response into a friendly text-stream
-    const stream = OpenAIStream(response);
-    // Respond with the stream
-    return new StreamingTextResponse(stream);
+    return response.toDataStreamResponse();
   } catch (e) {
     throw e;
   }
 }
 ```
 
-Here we deconstruct the messages from the post, and create our initial prompt. We use the prompt and the messages as the input to the `createChatCompletion` method. We then convert the response into a stream and return it to the client. Note that in this example, we only send the user's messages to OpenAI (as opposed to including the bot's messages as well).
+Here we deconstruct the messages from the post, get the context using the `getContext` function, and create our initial prompt. We use the prompt and the messages as the input to the `streamText` function from the AI SDK. We then return the response as a data stream. Note that in this example, we only send the user's messages to the AI model (as opposed to including the bot's messages as well).
 
 <!-- Add snapshot of simple chat -->
 
@@ -553,22 +533,22 @@ useEffect(() => {
 }, [messages, gotMessages]);
 ```
 
-## Running tests 
+## Running tests
 
-The pinecone-vercel-starter uses [Playwright](https://playwright.dev) for end to end testing. 
+The pinecone-vercel-starter uses [Playwright](https://playwright.dev) for end to end testing.
 
-To run all the tests: 
+To run all the tests:
 
 ```
 npm run test:e2e
 ```
 
-By default, when running locally, if errors are encountered, Playwright will open an HTML report showing which 
+By default, when running locally, if errors are encountered, Playwright will open an HTML report showing which
 tests failed and for which browser drivers.
 
-## Displaying test reports locally 
+## Displaying test reports locally
 
-To display the latest test report locally, run: 
+To display the latest test report locally, run:
 ```
 npm run test:show
 ```
