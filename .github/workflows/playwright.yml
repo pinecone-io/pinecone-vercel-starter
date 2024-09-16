@@ -32,9 +32,9 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 7 # Specify the pnpm version here
+          version: 9 # Specify the pnpm version here
       - name: Install dependencies
-        run: pnpm ci
+        run: pnpm install
       - name: Build application
         run: pnpm run build
       - name: Start server
