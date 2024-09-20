@@ -1,12 +1,8 @@
-import { Configuration, OpenAIApi } from 'openai-edge'
-import { Message, OpenAIStream, StreamingTextResponse } from 'ai'
-import { getContext } from '@/utils/context'
 
-// Create an OpenAI API client (that's edge friendly!)
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY
-})
-const openai = new OpenAIApi(config)
+import { Message } from 'ai'
+import { getContext } from '@/utils/context'
+import { openai } from '@ai-sdk/openai';
+import { streamText } from 'ai';
 
 // IMPORTANT! Set the runtime to edge
 export const runtime = 'edge'
@@ -21,7 +17,6 @@ export async function POST(req: Request) {
 
     // Get the context from the last message
     const context = await getContext(lastMessage.content, '')
-
 
     const prompt = [
       {
@@ -43,16 +38,12 @@ export async function POST(req: Request) {
       },
     ]
 
-    // Ask OpenAI for a streaming chat completion given the prompt
-    const response = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      stream: true,
-      messages: [...prompt, ...messages.filter((message: Message) => message.role === 'user')]
-    })
-    // Convert the response into a friendly text-stream
-    const stream = OpenAIStream(response)
-    // Respond with the stream
-    return new StreamingTextResponse(stream)
+    const result = await streamText({
+      model: openai("gpt-4o"),
+      messages: [...prompt,...messages.filter((message: Message) => message.role === 'user')]
+    });
+
+    return result.toDataStreamResponse();
   } catch (e) {
     throw (e)
   }

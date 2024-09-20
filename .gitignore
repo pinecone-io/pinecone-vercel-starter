@@ -36,7 +36,6 @@ next-env.d.ts
 .env
 
 #pnpm
-pnpm-lock.yaml
 /test-results/
 /playwright-report/
 /playwright/.cache/

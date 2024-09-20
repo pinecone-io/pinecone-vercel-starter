@@ -1,4 +1,4 @@
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 
 interface Page {
